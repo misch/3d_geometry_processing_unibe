@@ -38,9 +38,7 @@ public class Face extends HEElement {
 	 * @return
 	 */
 	public Iterator<HalfEdge> iteratorFE(){
-		//Implement this
-
-		return null;
+		return new IteratorFE(anEdge);
 	}
 	
 	public String toString(){
@@ -92,11 +90,44 @@ public class Face extends HEElement {
 						current.next);
 			return current.incident_v;
 		}
-
 		
 		@Override
 		public void remove() {
 			//we don't support removing through the iterator.
+			throw new UnsupportedOperationException();
+		}
+	}
+	
+	/**
+	 * Iterator to iterate over the edges of a face
+	 * @author Michèle
+	 *
+	 */
+	public final class IteratorFE implements Iterator<HalfEdge> {
+		
+		private HalfEdge first, current;
+		
+		public IteratorFE(HalfEdge anEdge){
+			first = anEdge;
+			current = null;
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return current == null || current.next != first;
+		}
+
+		@Override
+		public HalfEdge next() {
+			if(!hasNext()){
+				throw new NoSuchElementException();
+			}
+			
+			return current == null ? first : current.next;
+		}
+		
+		@Override
+		public void remove() {
 			throw new UnsupportedOperationException();
 		}
 
