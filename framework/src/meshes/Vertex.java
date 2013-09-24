@@ -113,7 +113,6 @@ public class Vertex extends HEElement{
 
 	public final class IteratorVV implements Iterator<Vertex>{
 
-		private HalfEdge anEdge;
 		private Iterator<HalfEdge> edgeIterator;
 		
 		public IteratorVV(HalfEdge anEdge){
