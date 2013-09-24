@@ -38,12 +38,11 @@ public class Vertex extends HEElement{
 	}
 	
 	/**
-	 * Get an iterator which iterates over the 1-neighbouhood
+	 * Get an iterator which iterates over the 1-neighborhood
 	 * @return
 	 */
 	public Iterator<Vertex> iteratorVV(){
-		//Implement this...
-		return null;
+		return new IteratorVV(anEdge);
 	}
 	
 	/**
@@ -112,4 +111,34 @@ public class Vertex extends HEElement{
 		}
 	}
 
+	public final class IteratorVV implements Iterator<Vertex>{
+
+		private HalfEdge anEdge;
+		private Iterator<HalfEdge> edgeIterator;
+		
+		public IteratorVV(HalfEdge anEdge){
+			edgeIterator = new IteratorVE(anEdge);
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return edgeIterator.hasNext();
+		}
+
+		@Override
+		public Vertex next() {
+			if (!hasNext()){
+				throw new NoSuchElementException();
+			}
+			
+			// Go through all the incident edges and take their starting points.
+			return edgeIterator.next().start();
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();			
+		}
+		
+	}
 }
