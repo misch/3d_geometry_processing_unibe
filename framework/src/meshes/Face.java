@@ -67,16 +67,16 @@ public class Face extends HEElement {
 	public final class IteratorFV implements Iterator<Vertex> {
 		
 		
-		private HalfEdge first, actual;
+		private HalfEdge first, current;
 
 		public IteratorFV(HalfEdge anEdge) {
 			first = anEdge;
-			actual = null;
+			current = null;
 		}
 
 		@Override
 		public boolean hasNext() {
-			return actual == null || actual.next != first;
+			return current == null || current.next != first;
 		}
 
 		@Override
@@ -87,10 +87,10 @@ public class Face extends HEElement {
 			}
 
 			//update what edge was returned last
-			actual = (actual == null?
+			current = (current == null?
 						first:
-						actual.next);
-			return actual.incident_v;
+						current.next);
+			return current.incident_v;
 		}
 
 		
