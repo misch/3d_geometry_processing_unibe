@@ -51,8 +51,7 @@ public class Vertex extends HEElement{
 	 * @return
 	 */
 	public Iterator<HalfEdge> iteratorVE(){
-		//Implement this...
-		return null;
+		return new IteratorVE(anEdge);
 	}
 	
 	/**
@@ -81,6 +80,36 @@ public class Vertex extends HEElement{
 			}
 		}
 		return isAdj;
+	}
+	
+	public final class IteratorVE implements Iterator<HalfEdge>{
+		
+		private HalfEdge first, current;
+		
+		public IteratorVE(HalfEdge anEdge){
+			// This Vertex is the starting point of anEdge
+			// and therefore the opposite of anEdge is the incident edge.
+			first = anEdge.opposite;
+			current = null;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return current == null || current.next.opposite != first;
+		}
+
+		@Override
+		public HalfEdge next() {
+			if (!hasNext()){
+				throw new NoSuchElementException();
+			}
+			return current == null ? first : current.next.opposite;
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 
 }
