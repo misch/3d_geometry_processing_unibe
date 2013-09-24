@@ -58,8 +58,7 @@ public class Vertex extends HEElement{
 	 * @return
 	 */
 	public Iterator<Face> iteratorVF(){
-		//Implement this.
-		return null;
+		return new IteratorVF(anEdge);
 	}
 	
 	
@@ -139,5 +138,31 @@ public class Vertex extends HEElement{
 			throw new UnsupportedOperationException();			
 		}
 		
+	}
+	
+	public final class IteratorVF implements Iterator<Face>{
+		// TODO:
+		// Some HalfEdges have no incident face...!
+		
+		private Iterator<HalfEdge> edgeIterator;
+		
+		public IteratorVF(HalfEdge anEdge){
+			edgeIterator = iteratorVE();
+		}
+		
+		@Override
+		public boolean hasNext() {
+			return edgeIterator.hasNext();
+		}
+
+		@Override
+		public Face next() {
+			return edgeIterator.next().getFace();
+		}
+
+		@Override
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }
