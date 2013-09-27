@@ -141,23 +141,30 @@ public class Vertex extends HEElement{
 	}
 	
 	public final class IteratorVF implements Iterator<Face>{
-		// TODO:
-		// Some HalfEdges have no incident face...!
 		
 		private Iterator<HalfEdge> edgeIterator;
+		private Face next;
 		
 		public IteratorVF(HalfEdge anEdge){
 			edgeIterator = iteratorVE();
 		}
 		
 		@Override
-		public boolean hasNext() {
-			return edgeIterator.hasNext();
+		public boolean hasNext() {		
+	
+			while (next == null && edgeIterator.hasNext()){
+					next = edgeIterator.next().getFace();
+			}
+			
+			return next == null ? false : true;
 		}
 
 		@Override
 		public Face next() {
-			return edgeIterator.next().getFace();
+			if (!hasNext()){
+				throw new NoSuchElementException();
+			}
+			return next;
 		}
 
 		@Override
