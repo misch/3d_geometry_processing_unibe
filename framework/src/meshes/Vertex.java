@@ -164,7 +164,9 @@ public class Vertex extends HEElement{
 			if (!hasNext()){
 				throw new NoSuchElementException();
 			}
-			return next;
+			Face nextFace = next;
+			next = null;
+			return nextFace;
 		}
 
 		@Override
