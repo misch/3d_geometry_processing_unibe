@@ -27,13 +27,15 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		
 		//Add Vertices
 		float[] verts = new float[m.getVertices().size()*3];
+		float[] valences = new float[m.getVertices().size()];
 		int[] ind = new int[m.getFaces().size()*3];
 		
 		//copy the data to the allocated arrays
 		copyToArrayP3f(m.getVertices(), verts);
 		
-		copyToArray(m.getFaces(), ind);
+		copyToArrayValence(m.getVertices(), valences);
 		
+		copyToArray(m.getFaces(), ind); 
 		
 		//The class GLVertexData provides the methods addElement(...) which will
 		//cause the passed array to be sent to the graphics card
@@ -45,11 +47,26 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		//Here the position coordinates are passed a second time to the shader as color
 		this.addElement(verts, Semantic.USERSPECIFIED , 3, "color");
 		
+		this.addElement(valences, Semantic.USERSPECIFIED, 1, "valence");
+		
 		//pass the index array which has to be conformal to the glRenderflag returned, here GL_Triangles
 		this.addIndices(ind);
 		
 	}
+
 	
+	/**
+	 * Helper method that copies the valence information to the valences array
+	 * @param vertices
+	 * @param valences
+	 */
+	private void copyToArrayValence(ArrayList<Vertex> vertices, float[] valences) {
+		int i = 0;
+		for(Vertex v: vertices){
+			valences[i++] = v.getValence();
+		}
+	}
+
 	/**
 	 * Helper method that copies the face information to the ind array
 	 * @param faces
