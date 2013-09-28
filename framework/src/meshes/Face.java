@@ -123,7 +123,8 @@ public class Face extends HEElement {
 				throw new NoSuchElementException();
 			}
 			
-			return current == null ? first : current.next;
+			current = (current == null ? first : current.next);
+			return current;
 		}
 		
 		@Override
