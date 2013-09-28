@@ -7,6 +7,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 
 import javax.vecmath.Point3f;
+import javax.vecmath.Tuple3f;
+import javax.vecmath.Vector3f;
 
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
@@ -35,6 +37,7 @@ public class HalfEdgeStructure {
 	private ArrayList<HalfEdge> edges;
 	ArrayList<Face> faces;
 	ArrayList<Vertex> vertices;
+	
 	
 	public HalfEdgeStructure(){
 		faces = new ArrayList<Face>();
@@ -219,5 +222,4 @@ public class HalfEdgeStructure {
 			v.index= idx++;
 		}
 	}
-
 }

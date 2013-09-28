@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
 
 /**
  * Implementation of a vertex for the {@link HalfEdgeStructure}
@@ -28,6 +27,16 @@ public class Vertex extends HEElement{
 	
 	public Point3f getPos() {
 		return pos;
+	}
+	
+	public void setPos(Point3f pos) {
+		this.pos = pos;
+	}
+	
+	public void setPos(float x, float y, float z){
+		this.pos.x = x;
+		this.pos.y = y;
+		this.pos.z = z;
 	}
 
 	public void setHalfEdge(HalfEdge he) {
