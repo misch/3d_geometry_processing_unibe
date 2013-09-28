@@ -16,6 +16,7 @@ public class Vertex extends HEElement{
 	/**adjacent edge: this vertex is startVertex of anEdge*/
 	HalfEdge anEdge;
 	
+	
 	/**The index of the vertex, mainly used for toString()*/
 	public int index;
 
@@ -36,6 +37,19 @@ public class Vertex extends HEElement{
 	public HalfEdge getHalfEdge() {
 		return anEdge;
 	}
+	
+	public int getValence(){
+		int valence = 0;
+		Iterator<HalfEdge> iter = iteratorVE();
+		
+		while (iter.hasNext()){
+			iter.next();
+			valence++;
+		}
+		
+		return valence;
+	}
+	
 	
 	/**
 	 * Get an iterator which iterates over the 1-neighborhood
