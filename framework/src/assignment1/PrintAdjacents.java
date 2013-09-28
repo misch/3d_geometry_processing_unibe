@@ -32,9 +32,26 @@ public class PrintAdjacents {
 		GLWireframeMesh glOneNeighborhood = new GLWireframeMesh(oneNeighborhood);
 		
 		Vertex v = hs.getVertices().get(3);
-		printIncidentEdges(v);
-		printAdjacentVertices(v);
-		printIncidentFaces(v);
+		Face f = hs.getFaces().get(0);
+		
+//		printIncidentEdges(v);
+//		printAdjacentVertices(v);
+//		printIncidentFaces(v);
+		
+		printAdjacentEdges(f);
+	}
+
+	private static void printAdjacentEdges(Face f) {
+		System.out.println("Face: " + f.toString());
+		Iterator<HalfEdge> iter = f.iteratorFE();
+		System.out.println("Adjacent edges: \n");
+		if (!iter.hasNext())
+			System.out.println("No adjacent edges");
+		while( iter.hasNext()){
+			System.out.println(iter.next());
+		}
+		System.out.println("=====================================");
+		
 	}
 
 	private static void printIncidentFaces(Vertex v) {
