@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
 /**
  * Implementation of a vertex for the {@link HalfEdgeStructure}
@@ -14,7 +15,6 @@ public class Vertex extends HEElement{
 	Point3f pos;
 	/**adjacent edge: this vertex is startVertex of anEdge*/
 	HalfEdge anEdge;
-	
 	
 	/**The index of the vertex, mainly used for toString()*/
 	public int index;
@@ -89,6 +89,28 @@ public class Vertex extends HEElement{
 		return "" + index;
 	}
 	
+	public Vector3f getNormal(){
+		Iterator<HalfEdge> iter = iteratorVE();
+		Vector3f normal = new Vector3f();
+		Vector3f faceNormal = new Vector3f();
+		
+		Vector3f first = iter.next().toVec();
+		while(iter.hasNext()){
+			HalfEdge secondEdge = iter.next();
+			Vector3f second = secondEdge.toVec();
+
+			faceNormal.cross(first,second);
+			faceNormal.normalize();
+
+			faceNormal.scale(first.angle(second));
+			normal.add(faceNormal);
+			
+			first = second;
+		}
+		normal.normalize();
+		return normal;
+	}
+		
 	
 
 	public boolean isAdjascent(Vertex w) {
