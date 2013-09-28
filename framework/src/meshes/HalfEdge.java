@@ -1,5 +1,8 @@
 package meshes;
 
+import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
+
 /**
  * Implementation of a half-edge for the {@link HalfEdgeStructure}
  * @author Alf
@@ -76,6 +79,18 @@ public class HalfEdge extends HEElement{
 	 */
 	public Face getFace() {
 		return incident_f;
+	}
+	
+	/**
+	 * Returns the Edge as a Vector.
+	 *
+	 */
+	public Vector3f toVec(){
+		Point3f end = end().getPos();
+		end.sub(start().getPos());
+		
+		Vector3f vec = new Vector3f(end.x,end.y,end.z);
+		return vec;
 	}
 
 	/**
