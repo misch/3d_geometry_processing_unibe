@@ -28,17 +28,17 @@ void main()
 	//compute a color and pass it to the fragment shader.
 	//frag_color = clamp(abs(position),0,0.75);
 	
-
+	
 		
 		if (valence > 6){
-		frag_color = vec4(1,0,0,0);
+		frag_color = vec4(1,1,0,0);
 	}
 	else {
 		if (valence < 6){
-			frag_color = vec4(0,0,1,0);
+			frag_color = vec4(1,0,0,0);
 		}
 		else {
-			frag_color = vec4(0,1,0,0);
+			frag_color = vec4(1,0.6,0,0);
 		}
 		
 	}
