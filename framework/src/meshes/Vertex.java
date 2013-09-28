@@ -101,7 +101,9 @@ public class Vertex extends HEElement{
 			if (!hasNext()){
 				throw new NoSuchElementException();
 			}
-			return current == null ? first : current.next.opposite;
+			
+			current = (current == null ? first : current.next.opposite);
+			return current;
 		}
 
 		@Override
