@@ -4,6 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import javax.vecmath.Vector3f;
+
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
 import meshes.reader.ObjReader;
@@ -28,6 +30,14 @@ public class HalfEdgeTest {
 		}
 		
 		edges = hs.getHalfEdges();
+	}
+	
+	@Test
+	public void testToVec(){
+		HalfEdge edge10 = edges.get(5);
+		Vector3f vec = edge10.toVec();
+		System.out.println(edge10);
+		System.out.println(vec);
 	}
 }
 

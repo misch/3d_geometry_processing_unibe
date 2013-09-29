@@ -92,12 +92,15 @@ public class Vertex extends HEElement{
 	public Vector3f getNormal(){
 		Iterator<HalfEdge> iter = iteratorVE();
 		Vector3f normal = new Vector3f();
-		Vector3f faceNormal = new Vector3f();
+		
 		
 		Vector3f first = iter.next().toVec();
 		while(iter.hasNext()){
 			HalfEdge secondEdge = iter.next();
+			System.out.println(secondEdge);
 			Vector3f second = secondEdge.toVec();
+			System.out.println(second);
+			Vector3f faceNormal = new Vector3f();
 
 			faceNormal.cross(first,second);
 			faceNormal.normalize();
