@@ -86,11 +86,9 @@ public class HalfEdge extends HEElement{
 	 *
 	 */
 	public Vector3f toVec(){
-		Point3f end = end().getPos();
+		Vector3f end = new Vector3f(end().getPos());
 		end.sub(start().getPos());
-		
-		Vector3f vec = new Vector3f(end.x,end.y,end.z);
-		return vec;
+		return end;
 	}
 
 	/**

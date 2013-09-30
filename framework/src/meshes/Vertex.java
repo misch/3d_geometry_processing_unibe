@@ -96,10 +96,7 @@ public class Vertex extends HEElement{
 		
 		Vector3f first = iter.next().toVec();
 		while(iter.hasNext()){
-			HalfEdge secondEdge = iter.next();
-			System.out.println(secondEdge);
-			Vector3f second = secondEdge.toVec();
-			System.out.println(second);
+			Vector3f second = iter.next().toVec();
 			Vector3f faceNormal = new Vector3f();
 
 			faceNormal.cross(first,second);
