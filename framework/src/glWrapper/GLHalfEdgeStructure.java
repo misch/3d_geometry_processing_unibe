@@ -36,14 +36,14 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		//Add Vertices
 				float[] verts = new float[myMesh.getVertices().size()*3];
 				float[] valences = new float[myMesh.getVertices().size()];
+				float[] normals = new float[myMesh.getVertices().size()*3];
 				int[] ind = new int[myMesh.getFaces().size()*3];
 				
 				//copy the data to the allocated arrays
 				
 				copyToArrayP3f(myMesh.getVertices(), verts);
-				
 				copyToArrayValence(myMesh.getVertices(), valences);
-				
+				copyToArrayNormals(myMesh.getVertices(), normals);
 				copyToArray(myMesh.getFaces(), ind); 
 				
 					
@@ -60,6 +60,8 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 				
 				this.addElement(valences, Semantic.USERSPECIFIED, 1, "valence");
 				
+				this.addElement(normals, Semantic.USERSPECIFIED, 3, "normal");
+				
 				//pass the index array which has to be conformal to the glRenderflag returned, here GL_Triangles
 				this.addIndices(ind);
 	}
@@ -72,6 +74,20 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		int i = 0;
 		for(Vertex v: vertices){
 			valences[i++] = v.getValence();
+		}
+	}
+	
+	/**
+	 * Helper method that copies the valence information to the valences array
+	 * @param vertices
+	 * @param normals
+	 */
+	private void copyToArrayNormals(ArrayList<Vertex> vertices, float[] normals) {
+		int i = 0;
+		for(Vertex v: vertices){
+			normals[i++] = v.getNormal().x;
+			normals[i++] = v.getNormal().y;
+			normals[i++] = v.getNormal().z;
 		}
 	}
 
