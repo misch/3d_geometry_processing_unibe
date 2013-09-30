@@ -1,6 +1,9 @@
 package meshes;
 
 import static org.junit.Assert.*;
+
+import javax.vecmath.Vector3f;
+
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
 import meshes.reader.ObjReader;
@@ -28,9 +31,32 @@ public class VertexTest {
 	public void testGetValence() {
 		Vertex center = hs.getVertices().get(0);
 		
-//		assertEquals(5, center.getValence());
-//		assertEquals(3, hs.getVertices().get(2).getValence());
-//		System.out.println(center.getNormal());
-		center.getNormal();
+		assertEquals(5, center.getValence());
+		assertEquals(3, hs.getVertices().get(2).getValence());
+	}
+	
+	@Test
+	public void testNormalsAreVertical(){
+		
+		for (Vertex vertex : hs.getVertices()){
+			Vector3f normal = vertex.getNormal();
+			assert(normal.x == 0 && normal.y == 0);
+		}
+	}
+	
+	@Test
+	public void testNormalsHaveUnitLength(){
+		for (Vertex vertex : hs.getVertices()){
+			Vector3f normal = vertex.getNormal();
+			assert(normal.length() == 1);
+		}
+	}
+	
+	@Test
+	public void testNormalsArePositivelyOriented(){
+		for (Vertex vertex : hs.getVertices()){
+			Vector3f normal = vertex.getNormal();
+			assert(normal.z > 0);
+		}
 	}
 }

@@ -93,19 +93,21 @@ public class Vertex extends HEElement{
 		Iterator<HalfEdge> iter = iteratorVE();
 		Vector3f normal = new Vector3f();
 		
-		
-		Vector3f first = iter.next().toVec();
+		HalfEdge first = iter.next();
 		while(iter.hasNext()){
-			Vector3f second = iter.next().toVec();
-			Vector3f faceNormal = new Vector3f();
-
-			faceNormal.cross(first,second);
-			faceNormal.normalize();
-
-			faceNormal.scale(first.angle(second));
-			normal.add(faceNormal);
-			
+			HalfEdge second = iter.next();
+			if (first.incident_f != null){
+				
+				Vector3f faceNormal = new Vector3f();
+	
+				faceNormal.cross(second.toVec(),first.toVec());
+				faceNormal.normalize();
+	
+				faceNormal.scale(first.toVec().angle(second.toVec()));
+				normal.add(faceNormal);
+			}
 			first = second;
+			
 		}
 		normal.normalize();
 		return normal;
