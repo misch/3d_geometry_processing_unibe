@@ -14,7 +14,7 @@ import openGL.MyDisplay;
 public class SmoothDemo {
 	public static void main(String[] args) throws IOException{
 		//Load a wireframe mesh
-		WireframeMesh m = ObjReader.read("./objs/bunny5k.obj", true);
+		WireframeMesh m = ObjReader.read("./objs/dragon.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		
 		//create a half-edge structure out of the wireframe description.
@@ -33,6 +33,7 @@ public class SmoothDemo {
 		GLHalfEdgeStructure glSmoothed3 = new GLHalfEdgeStructure(hs);
 		GLHalfEdgeStructure glSmoothed4 = new GLHalfEdgeStructure(hs);
 		GLHalfEdgeStructure glSmoothed5 = new GLHalfEdgeStructure(hs);
+		GLHalfEdgeStructure glSmoothed40 = new GLHalfEdgeStructure(hs);
 		
 		// smoothing:	always just 1 because the values of the vertex position
 		// 				get overwritten during the smoothing
@@ -41,6 +42,7 @@ public class SmoothDemo {
 		glSmoothed3.smooth(1);
 		glSmoothed4.smooth(1);
 		glSmoothed5.smooth(1);
+		glSmoothed40.smooth(35);
 		
 		
 		// shaders
@@ -50,6 +52,7 @@ public class SmoothDemo {
 		setShader("trimesh_flat", glSmoothed3);
 		setShader("trimesh_flat", glSmoothed4);
 		setShader("trimesh_flat", glSmoothed5);
+		setShader("trimesh_flat", glSmoothed40);
 		
 		
 		
@@ -62,6 +65,7 @@ public class SmoothDemo {
 		disp.addToDisplay(glSmoothed3);
 		disp.addToDisplay(glSmoothed4);
 		disp.addToDisplay(glSmoothed5);
+		disp.addToDisplay(glSmoothed40);
 				
 	}
 	
