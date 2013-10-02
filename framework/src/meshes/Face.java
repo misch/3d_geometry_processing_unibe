@@ -155,4 +155,68 @@ public class Face extends HEElement {
 		return crossProd.length()/2.f;
 	}
 
+	public float getMixedVoronoiCellArea(Vertex p) {
+		
+		float area = 0;
+		if (!isObtuse()){
+			HalfEdge PQ = getOutgoing(p);
+			HalfEdge PR = getIncoming(p).getOpposite();
+			float angleQ = PR.getOppositeAngle();
+			float angleR = PQ.getOppositeAngle();
+			
+			area = (1/8.f)*(PR.lengthSquared() * cot(angleQ) + PQ.lengthSquared()* cot(angleR));
+		}
+		else{
+			if (isObtuseVertex(p)){
+				area = getArea()/2;
+			}
+			else{
+				area = getArea()/4;
+			}
+		}
+		return area;
+	}
+
+	private boolean isObtuseVertex(Vertex p) {
+		float angle = (float)(getIncoming(p).toVec().angle(getOutgoing(p).toVec()));
+		
+		return angle > Math.PI/2;
+	}
+
+	private float cot(float angle){
+		return 1.f/(float)(Math.tan(angle));
+	}
+	private HalfEdge getOutgoing(Vertex vertex) {
+		Iterator<HalfEdge> iter = iteratorFE();
+		HalfEdge outgoing = iter.next();
+		
+		while(outgoing.start() != vertex){
+			outgoing = iter.next();
+		}
+		
+		return outgoing;
+	}
+	
+	private HalfEdge getIncoming(Vertex vertex) {
+		Iterator<HalfEdge> iter = iteratorFE();
+		HalfEdge incoming = iter.next();
+		
+		while(incoming.end() != vertex){
+			incoming = iter.next();
+		}
+		
+		return incoming;
+	}
+
+	private boolean isObtuse() {
+		Iterator<Vertex> iter = iteratorFV();
+		boolean isObtuse = false;
+		while (iter.hasNext()){
+			if(isObtuseVertex(iter.next())){
+				isObtuse = true;
+			}
+		}
+		return isObtuse;
+	}
+
 }

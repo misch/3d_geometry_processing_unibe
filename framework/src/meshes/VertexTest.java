@@ -2,6 +2,8 @@ package meshes;
 
 import static org.junit.Assert.*;
 
+import java.util.Iterator;
+
 import javax.vecmath.Vector3f;
 
 import meshes.exception.DanglingTriangleException;
@@ -58,5 +60,32 @@ public class VertexTest {
 			Vector3f normal = vertex.getNormal();
 			assert(normal.z > 0);
 		}
+	}
+	
+	@Test
+	public void testGetCurvature(){
+		for (Vertex vertex : hs.getVertices()){
+			System.out.println(vertex.getCurvature());
+		}
+	}
+	
+	@Test
+	public void testVoronoiCell(){		
+		HalfEdgeStructure hs = new HalfEdgeStructure();
+		try {
+			WireframeMesh sphere = ObjReader.read("./objs/sphere.obj", false);
+			hs.init(sphere);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		float radius = 2;
+		float summedVoronoiCells = 0;
+		for (Vertex v: hs.getVertices()) {
+			Iterator<Face> iter = v.iteratorVF();
+			while (iter.hasNext())
+				summedVoronoiCells += iter.next().getMixedVoronoiCellArea(v);
+		}
+		assertEquals(4*Math.PI*radius*radius, summedVoronoiCells, 0.01);
 	}
 }

@@ -36,6 +36,7 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		//Add Vertices
 				float[] verts = new float[myMesh.getVertices().size()*3];
 				float[] valences = new float[myMesh.getVertices().size()];
+				float[] curvatures = new float[myMesh.getVertices().size()];
 				float[] normals = new float[myMesh.getVertices().size()*3];
 				int[] ind = new int[myMesh.getFaces().size()*3];
 				
@@ -43,6 +44,7 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 				
 				copyToArrayP3f(myMesh.getVertices(), verts);
 				copyToArrayValence(myMesh.getVertices(), valences);
+				copyToArrayCurvature(myMesh.getVertices(), curvatures);
 				copyToArrayNormals(myMesh.getVertices(), normals);
 				copyToArray(myMesh.getFaces(), ind); 
 				
@@ -59,6 +61,7 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 				this.addElement(verts, Semantic.USERSPECIFIED , 3, "color");
 				
 				this.addElement(valences, Semantic.USERSPECIFIED, 1, "valence");
+				this.addElement(curvatures, Semantic.USERSPECIFIED, 1, "curvature");
 				
 				this.addElement(normals, Semantic.USERSPECIFIED, 3, "normal");
 				
@@ -74,6 +77,18 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		int i = 0;
 		for(Vertex v: vertices){
 			valences[i++] = v.getValence();
+		}
+	}
+	
+	/**
+	 * Helper method that copies the curvature information to the curvatures array
+	 * @param vertices
+	 * @param curvatures
+	 */
+	private void copyToArrayCurvature(ArrayList<Vertex> vertices, float[] curvatures) {
+		int i = 0;
+		for(Vertex v: vertices){
+			curvatures[i++] = v.getCurvature();
 		}
 	}
 	

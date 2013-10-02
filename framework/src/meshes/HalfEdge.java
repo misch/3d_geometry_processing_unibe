@@ -1,5 +1,7 @@
 package meshes;
 
+import java.util.NoSuchElementException;
+
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
@@ -56,6 +58,14 @@ public class HalfEdge extends HEElement{
 	
 	public void setOpposite(HalfEdge opp) {
 		this.opposite = opp;
+	}
+	
+	public float length(){
+		return this.toVec().length();
+	}
+	
+	public float lengthSquared(){
+		return this.toVec().lengthSquared();
 	}
 
 	/**
@@ -132,6 +142,11 @@ public class HalfEdge extends HEElement{
 	
 	public String toString(){
 		return "( " + start().toString() + " --> " + end().toString() + ")";
+	}
+
+	public float getOppositeAngle() {
+		if(this.incident_f == null) throw new NoSuchElementException("No incident face");
+		return next.toVec().angle(next.next.toVec());
 	}
 
 }

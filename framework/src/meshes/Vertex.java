@@ -59,7 +59,38 @@ public class Vertex extends HEElement{
 		return valence;
 	}
 	
+	public float getMixedArea(){
+		Iterator<Face> iter = iteratorVF();
+		float mixedArea = 0;
+		while (iter.hasNext()){
+			Face face = iter.next();
+			mixedArea += face.getMixedVoronoiCellArea(this);
+		}
+		return mixedArea;
+	}
 	
+	public float getCurvature(){
+		Iterator<HalfEdge> iter = iteratorVE();
+		Vector3f sum = new Vector3f();
+		
+		while(iter.hasNext()){
+			HalfEdge edge = iter.next();
+			
+			if(edge.hasFace() && edge.getOpposite().hasFace()){
+				float alpha = edge.getOppositeAngle();
+				float beta = edge.getOpposite().getOppositeAngle();
+				Vector3f v = edge.toVec();
+				v.scale(cot(alpha) + cot(beta));
+				sum.add(v);
+			}
+		}
+		float curvature = sum.length()/(4*getMixedArea());
+		return curvature;
+	}
+	
+	private float cot(float angle){
+		return 1.f/(float)(Math.tan(angle));
+	}
 	/**
 	 * Get an iterator which iterates over the 1-neighborhood
 	 * @return
