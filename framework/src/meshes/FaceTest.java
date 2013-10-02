@@ -3,6 +3,7 @@ package meshes;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.vecmath.Vector3f;
 
@@ -14,20 +15,31 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class FaceTest {
-	private HalfEdgeStructure hs;
-	ArrayList<Face> faces;
+	private HalfEdgeStructure oneNeigh, simpleArea;
+	private ArrayList<Face> facesOneNeigh;
+	private Face faceSimpleArea;
+	
 	
 	@Before
 	public void setUp() throws Exception {
-		WireframeMesh m = ObjReader.read("./objs/oneNeighborhood.obj", true);
-		hs = new HalfEdgeStructure();
+		WireframeMesh oneNeighWireFrame = ObjReader.read("./objs/oneNeighborhood.obj", true);
+		WireframeMesh simpleAreaWireFrame = ObjReader.read("./objs/simpleAreaObject.obj", false);
+		oneNeigh = new HalfEdgeStructure();
+		simpleArea = new HalfEdgeStructure();
 		
 		try {
-			hs.init(m);
+			oneNeigh.init(oneNeighWireFrame);
+			simpleArea.init(simpleAreaWireFrame);
 		} catch (MeshNotOrientedException | DanglingTriangleException e) {
 			e.printStackTrace();
 			return;
 		}
-		faces = hs.getFaces();
+		facesOneNeigh = oneNeigh.getFaces();
+		faceSimpleArea = simpleArea.getFaces().get(0);
+	}
+	
+	@Test
+	public void testArea(){		
+		assert(faceSimpleArea.getArea() == 0.5);
 	}
 }

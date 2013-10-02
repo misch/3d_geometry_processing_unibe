@@ -3,6 +3,8 @@ package meshes;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import javax.vecmath.Vector3f;
+
 /**
  * Implementation of a face for the {@link HalfEdgeStructure}
  *
@@ -139,6 +141,18 @@ public class Face extends HEElement {
 		public Face face() {
 			return first.incident_f;
 		}
+	}
+	
+	public float getArea(){
+		Iterator<HalfEdge> iter = iteratorFE();
+		Vector3f crossProd = new Vector3f();
+		
+		HalfEdge edge1 = iter.next().opposite;
+		HalfEdge edge2 = iter.next();
+		
+		crossProd.cross(edge2.toVec(), edge1.toVec());
+		
+		return crossProd.length()/2.f;
 	}
 
 }
