@@ -64,13 +64,26 @@ public class VertexTest {
 	
 	@Test
 	public void testGetCurvature(){
-		for (Vertex vertex : hs.getVertices()){
-			System.out.println(vertex.getCurvature());
+		Vertex vertex = hs.getVertices().get(0);
+		assertEquals(0.0, vertex.getCurvature(), 0.000001);
+		
+		HalfEdgeStructure hs = new HalfEdgeStructure();
+		try {
+			WireframeMesh sphere = ObjReader.read("./objs/sphere.obj", false);
+			hs.init(sphere);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		for (Vertex v: hs.getVertices()) {
+			assertEquals(0.5, v.getCurvature(), 0.01);
+		
 		}
 	}
 	
 	@Test
-	public void testVoronoiCell(){		
+	public void testGetMixedArea(){		
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		try {
 			WireframeMesh sphere = ObjReader.read("./objs/sphere.obj", false);
@@ -82,10 +95,9 @@ public class VertexTest {
 		float radius = 2;
 		float summedVoronoiCells = 0;
 		for (Vertex v: hs.getVertices()) {
-			Iterator<Face> iter = v.iteratorVF();
-			while (iter.hasNext())
-				summedVoronoiCells += iter.next().getMixedVoronoiCellArea(v);
+			summedVoronoiCells += v.getMixedArea();
+		
 		}
-		assertEquals(4*Math.PI*radius*radius, summedVoronoiCells, 0.01);
+		assertEquals(4*Math.PI*radius*radius, summedVoronoiCells, 0.25);
 	}
 }

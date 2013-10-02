@@ -146,7 +146,7 @@ public class HalfEdge extends HEElement{
 
 	public float getOppositeAngle() {
 		if(this.incident_f == null) throw new NoSuchElementException("No incident face");
-		return next.toVec().angle(next.next.toVec());
+		return next.getOpposite().toVec().angle(next.next.toVec());
 	}
 
 }
