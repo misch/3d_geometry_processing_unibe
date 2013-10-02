@@ -178,7 +178,7 @@ public class Face extends HEElement {
 	}
 
 	private boolean isObtuseVertex(Vertex p) {
-		float angle = (float)(getIncoming(p).toVec().angle(getOutgoing(p).toVec()));
+		float angle = (float)(getIncoming(p).getOpposite().toVec().angle(getOutgoing(p).toVec()));
 		
 		return angle > Math.PI/2;
 	}
