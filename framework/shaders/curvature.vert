@@ -29,7 +29,7 @@ void main()
 	//compute a color and pass it to the fragment shader.
 	//frag_color = clamp(abs(position),0,0.75);
 	
-	frag_color = vec4(abs(curvature));
+	frag_color = vec4(log(1+curvature/10.f));
 	
 	gl_Position = projection * modelview * position;
 }
