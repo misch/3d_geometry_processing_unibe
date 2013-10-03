@@ -14,7 +14,7 @@ import openGL.MyDisplay;
 public class CurvatureDemo {
 	public static void main(String[] args) throws IOException{
 		//Load a wireframe mesh
-		WireframeMesh m = ObjReader.read("./objs/dragon.obj", true);
+		WireframeMesh m = ObjReader.read("./objs/tiger.obj", true);
 		
 		// half-edge structure
 		HalfEdgeStructure hs = new HalfEdgeStructure();

@@ -28,8 +28,18 @@ void main()
 {
 	//compute a color and pass it to the fragment shader.
 	//frag_color = clamp(abs(position),0,0.75);
+	float log_curv = log(1+curvature/10.f);
 	
-	frag_color = vec4(log(1+curvature/10.f));
+	float red = log_curv-1;
+	float blue = 1-log_curv;
+	float green;
+	if (log_curv <= 1){
+		green = log_curv;
+	}else{
+		green = 2-log_curv;
+	}
+	
+	frag_color = vec4(red,green,blue,1);
 	
 	gl_Position = projection * modelview * position;
 }
