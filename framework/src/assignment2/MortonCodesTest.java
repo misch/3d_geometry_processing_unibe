@@ -32,6 +32,15 @@ public class MortonCodesTest {
 	@Test
 	public void testNeighborPlus(){
 		assertEquals(nbr_plus_x, MortonCodes.nbrCode(hash, 4, 0b100));
+		assertEquals(nbr_plus_y, MortonCodes.nbrCode(hash, 4, 0b010));
+		assertEquals(nbr_plus_z, MortonCodes.nbrCode(hash, 4, 0b001));
+	}
+	
+	@Test
+	public void testNeighborMinus(){
+		assertEquals(nbr_minus_x, MortonCodes.nbrCodeMinus(hash, 4, 0b100));
+		assertEquals(nbr_minus_y, MortonCodes.nbrCodeMinus(hash, 4, 0b010));
+		assertEquals(nbr_minus_z, MortonCodes.nbrCodeMinus(hash, 4, 0b001));
 	}
 
 }
