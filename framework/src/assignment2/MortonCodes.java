@@ -93,9 +93,7 @@ public class MortonCodes {
 	 * @return
 	 */
 	public static boolean isCellOnLevelXGrid(long cell_code, int level){
-
-		//implement this..
-		return false;
+		return (cell_code >> (3*level) == 1L);
 	}
 	
 	
