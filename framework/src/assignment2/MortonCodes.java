@@ -33,9 +33,9 @@ public class MortonCodes {
 	public static long nbrCode(long code, int level, int differenceXYZ){
 		long xResult, yResult, zResult;
 		
-		xResult = ((code | ~xMask) + differenceXYZ & xMask ) & xMask;
-		yResult = ((code | ~yMask) + differenceXYZ & yMask ) & yMask;
-		zResult = ((code | ~zMask) + differenceXYZ & zMask ) & zMask;
+		xResult = ((code | ~xMask) + (differenceXYZ & xMask) ) & xMask;
+		yResult = ((code | ~yMask) + (differenceXYZ & yMask) ) & yMask;
+		zResult = ((code | ~zMask) + (differenceXYZ & zMask) ) & zMask;
 		
 		long result = (xResult | yResult | zResult);
 		
