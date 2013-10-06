@@ -105,8 +105,9 @@ public class MortonCodes {
 	 * it will lie on the levels k+1,k+2... tree_depth too.
 	 */
 	public static boolean isVertexOnLevelXGrid(long vertex_code, int level, int tree_depth){
-		//implement this..
-		return false;
+		long mask = ~(-1L << (3*(tree_depth-level))); // 0b1 000 000 000 111 111 or similar
+		
+		return (mask & vertex_code) == 0L;
 	}
 	
 	/**
