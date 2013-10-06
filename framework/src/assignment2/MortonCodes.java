@@ -27,15 +27,15 @@ public class MortonCodes {
 	 * 0bxyz using dilated addition
 	 * @param code
 	 * @param level
-	 * @param Obxyz
+	 * @param differenceXYZ
 	 * @return
 	 */
-	public static long nbrCode(long code, int level, int plusXYZ){
+	public static long nbrCode(long code, int level, int differenceXYZ){
 		long xResult, yResult, zResult;
 		
-		xResult = ((code | ~xMask) + plusXYZ & xMask ) & xMask;
-		yResult = ((code | ~yMask) + plusXYZ & yMask ) & yMask;
-		zResult = ((code | ~zMask) + plusXYZ & zMask ) & zMask;
+		xResult = ((code | ~xMask) + differenceXYZ & xMask ) & xMask;
+		yResult = ((code | ~yMask) + differenceXYZ & yMask ) & yMask;
+		zResult = ((code | ~zMask) + differenceXYZ & zMask ) & zMask;
 		
 		long result = (xResult | yResult | zResult);
 		
@@ -51,12 +51,23 @@ public class MortonCodes {
 	 * 0bxyz using dilated subtraction
 	 * @param code
 	 * @param level
-	 * @param Obxyz
+	 * @param differenceXYZ
 	 * @return
 	 */	
-	public static long nbrCodeMinus(long code, int level, int Obxyz){
-		//implement this
-		return -1L;
+	public static long nbrCodeMinus(long code, int level, int differenceXYZ){
+	long xResult, yResult, zResult;
+		
+		xResult = ((code & xMask) - differenceXYZ & xMask ) & xMask;
+		yResult = ((code & yMask) - differenceXYZ & yMask ) & yMask;
+		zResult = ((code & zMask) - differenceXYZ & zMask ) & zMask;
+		
+		long result = (xResult | yResult | zResult);
+		
+		if (isOverflow(result, level)){
+			return -1L;
+		}
+		
+		return result;
 	}
 	
 	
