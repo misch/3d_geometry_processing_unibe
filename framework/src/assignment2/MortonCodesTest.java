@@ -42,5 +42,13 @@ public class MortonCodesTest {
 		assertEquals(nbr_minus_y, MortonCodes.nbrCodeMinus(hash, 4, 0b010));
 		assertEquals(nbr_minus_z, MortonCodes.nbrCodeMinus(hash, 4, 0b001));
 	}
-
+	
+	@Test
+	public void isCellOnLevelXGrid(){
+		assert(MortonCodes.isCellOnLevelXGrid(0b1000, 1));
+		assert(MortonCodes.isCellOnLevelXGrid(0b1000100, 2));
+		assert(MortonCodes.isCellOnLevelXGrid(0b1100000000, 3));
+		assertFalse(MortonCodes.isCellOnLevelXGrid(0b110000000, 1));
+		assertFalse(MortonCodes.isCellOnLevelXGrid(0b1000, 2));
+	}
 }
