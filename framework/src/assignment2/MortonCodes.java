@@ -8,9 +8,9 @@ package assignment2;
 public class MortonCodes {
 	
 	/** the three masks for dilated integer operations */
-	public static final long d100100 = 0b100100100100100100100100100100100100100100100100100100100100100L, 
-			d010010 = 0b010010010010010010010010010010010010010010010010010010010010010L, 
-			d001001 = 0b001001001001001001001001001001001001001001001001001001001001001L;
+	public static final long xMask = 0b100100100100100100100100100100100100100100100100100100100100100L, 
+			yMask = 0b010010010010010010010010010010010010010010010010010010010010010L, 
+			zMask = 0b001001001001001001001001001001001001001001001001001001001001001L;
 	
 	
 	/**
@@ -30,10 +30,20 @@ public class MortonCodes {
 	 * @param Obxyz
 	 * @return
 	 */
-	public static long nbrCode(long code, int level, int Obxyz){
+	public static long nbrCode(long code, int level, int plusXYZ){
+		long xResult, yResult, zResult;
 		
-		//implement this
-		return -1L;
+		xResult = ((code | ~xMask) + plusXYZ & xMask ) & xMask;
+		yResult = ((code | ~yMask) + plusXYZ & yMask ) & yMask;
+		zResult = ((code | ~zMask) + plusXYZ & zMask ) & zMask;
+		
+		long result = (xResult | yResult | zResult);
+		
+		if (isOverflow(result, level)){
+			return -1L;
+		}
+		
+		return result;
 	}
 
 	/**
@@ -58,11 +68,8 @@ public class MortonCodes {
 	 * @param level
 	 * @return
 	 */
-	public static boolean overflowTest(long code, int level){
-
-		//implement this
-		
-		return true;
+	public static boolean isOverflow(long code, int level){
+		return (code >> (3*level) != 1L);
 		
 	}
 	
@@ -98,9 +105,9 @@ public class MortonCodes {
 	 */
 	public static boolean isVertexOnBoundary(long vertex_code, int tree_depth){
 		boolean is = (vertex_code & (0b111 << 3*(tree_depth-1)))!= 0 || //x==1, y==1 or z==1 in a unit cube
-				(vertex_code & d100100) == 0 || //x==0
-				(vertex_code & d010010) == 0 || //y==0
-				(vertex_code & d001001) == (0b1 << 3*tree_depth) ; //z==0 (only the delimiter bit is set)
+				(vertex_code & xMask) == 0 || //x==0
+				(vertex_code & yMask) == 0 || //y==0
+				(vertex_code & zMask) == (0b1 << 3*tree_depth) ; //z==0 (only the delimiter bit is set)
 		
 		return is;
 	}
