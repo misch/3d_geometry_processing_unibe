@@ -34,6 +34,7 @@ public class MortonCodesTest {
 		assertEquals(nbr_plus_x, MortonCodes.nbrCode(hash, 4, 0b100));
 		assertEquals(nbr_plus_y, MortonCodes.nbrCode(hash, 4, 0b010));
 		assertEquals(nbr_plus_z, MortonCodes.nbrCode(hash, 4, 0b001));
+		assertEquals(-1L, MortonCodes.nbrCode(0b1111, 1, 0b100));
 	}
 	
 	@Test
@@ -41,6 +42,7 @@ public class MortonCodesTest {
 		assertEquals(nbr_minus_x, MortonCodes.nbrCodeMinus(hash, 4, 0b100));
 		assertEquals(nbr_minus_y, MortonCodes.nbrCodeMinus(hash, 4, 0b010));
 		assertEquals(nbr_minus_z, MortonCodes.nbrCodeMinus(hash, 4, 0b001));
+		assertEquals(-1L, MortonCodes.nbrCodeMinus(0b1000000, 2, 0b100));
 	}
 	
 	@Test
@@ -50,5 +52,18 @@ public class MortonCodesTest {
 		assert(MortonCodes.isCellOnLevelXGrid(0b1100000000, 3));
 		assertFalse(MortonCodes.isCellOnLevelXGrid(0b110000000, 1));
 		assertFalse(MortonCodes.isCellOnLevelXGrid(0b1000, 2));
+	}
+	
+	@Test
+	public void isVertexOnLevelXGrid(){
+		assertFalse(MortonCodes.isVertexOnLevelXGrid(0b1000000010000000,1,5));
+		assertFalse(MortonCodes.isVertexOnLevelXGrid(0b1000000010000000,2,5));
+		assert(MortonCodes.isVertexOnLevelXGrid(0b1000000010000000,3,5));
+		assert(MortonCodes.isVertexOnLevelXGrid(0b1000000010000000,4,5));
+		assert(MortonCodes.isVertexOnLevelXGrid(0b1000000010000000,5,5));
+		
+		assertFalse(MortonCodes.isVertexOnLevelXGrid(0b1000111001, 1, 3));
+		assert(MortonCodes.isVertexOnLevelXGrid(0b1000111000, 2, 3));
+		assert(MortonCodes.isVertexOnLevelXGrid(0b1000111000, 3, 3));
 	}
 }
