@@ -397,8 +397,7 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeCell getNbr_c2c(HashOctreeCell cell, int Obxyz){
-		long cellCode = cell.code;
-		long theoreticalNeighborCode = MortonCodes.nbrCode(cellCode, cell.lvl, Obxyz);
+		long theoreticalNeighborCode = MortonCodes.nbrCode(cell.code, cell.lvl, Obxyz);
 		
 		if (theoreticalNeighborCode == -1L){
 			return null;
@@ -406,9 +405,9 @@ public class HashOctree {
 		
 		HashOctreeCell neighborCell = getCell(theoreticalNeighborCode);
 		
-		while(neighborCell == null && cellCode > 0b1000){
-			cellCode = MortonCodes.parentCode(theoreticalNeighborCode);
-			neighborCell = getCell(cellCode);
+		while(neighborCell == null && theoreticalNeighborCode > 0b1000){
+			theoreticalNeighborCode = MortonCodes.parentCode(theoreticalNeighborCode);
+			neighborCell = getCell(theoreticalNeighborCode);
 		}
 		
 		return neighborCell;
