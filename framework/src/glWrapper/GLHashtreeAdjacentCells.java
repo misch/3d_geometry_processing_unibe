@@ -51,7 +51,10 @@ public class GLHashtreeAdjacentCells extends GLDisplayable {
 			ind[i]=i;
 		}
 		this.addElement(verts, Semantic.POSITION , 3);
-		this.addElement(neighborCells, Semantic.USERSPECIFIED , 1, "neighbor");
+		
+		// Call the variable "pointTo" (instead of e.g. "neighbor" in order to use 
+		// the standard octree vertex shader.
+		this.addElement(neighborCells, Semantic.USERSPECIFIED , 3, "pointTo");
 		
 		this.addIndices(ind);
 		

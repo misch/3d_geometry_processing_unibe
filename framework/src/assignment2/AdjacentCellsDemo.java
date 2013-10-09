@@ -1,6 +1,7 @@
 package assignment2;
 
 import glWrapper.GLHashtree;
+import glWrapper.GLHashtreeAdjacentCells;
 import glWrapper.GLHashtree_Vertices;
 import glWrapper.GLPointCloud;
 
@@ -11,7 +12,7 @@ import meshes.reader.PlyReader;
 import openGL.MyDisplay;
 
 
-public class ParentChildDemo {
+public class AdjacentCellsDemo {
 	
 	public static void main(String[] args) throws IOException{
 		hashTreeDemo(PlyReader.readPointCloud("./objs/octreeTest.ply", true));
@@ -22,12 +23,12 @@ public class ParentChildDemo {
 		HashOctree tree = new HashOctree(pc,4,1,1f);
 		MyDisplay display = new MyDisplay();
 		GLPointCloud glPC = new GLPointCloud(pc);
-		GLHashtree glOT = new GLHashtree(tree);
+		GLHashtreeAdjacentCells glOT = new GLHashtreeAdjacentCells(tree);
 		GLHashtree glOT2 = new GLHashtree(tree);
 
 		glOT.configurePreferredShader("shaders/octree.vert",
 		"shaders/octree.frag",
-		"shaders/octree_parent_child.geom");
+		"shaders/octree_adjacent_cells.geom");
 		
 		glOT2.configurePreferredShader("shaders/octree.vert",
 				"shaders/octree.frag",
