@@ -399,20 +399,10 @@ public class HashOctree {
 	public HashOctreeCell getNbr_c2c(HashOctreeCell cell, int Obxyz){
 		long theoreticalNeighborCode = MortonCodes.nbrCode(cell.code, cell.lvl, Obxyz);
 		
-		if (theoreticalNeighborCode == -1L){
-			return null;
-		}
-		
-		HashOctreeCell neighborCell = getCell(theoreticalNeighborCode);
-		
-		while(neighborCell == null && theoreticalNeighborCode > 0b1000){
-			theoreticalNeighborCode = MortonCodes.parentCode(theoreticalNeighborCode);
-			neighborCell = getCell(theoreticalNeighborCode);
-		}
-		
-		return neighborCell;
+		return lookForExistingParent(theoreticalNeighborCode);
 	}
-	
+
+
 	/**
 	 * Return the cell on the same or on a lower level, which lies in the
 	 * direction Obxyz. If there is no such cell, null is returned
@@ -421,13 +411,34 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeCell getNbr_c2cMinus(HashOctreeCell cell, int Obxyz){
-
-		//TODO implement this
-		return null;
+		long theoreticalNeighborCode = MortonCodes.nbrCodeMinus(cell.code, cell.lvl, Obxyz);
+		return lookForExistingParent(theoreticalNeighborCode);
 	}
 	
 	
-	
+	/**
+	 * If the cell with the theoretically computed code
+	 * doesn't exist, iterate through the levels and
+	 * return the first parent cell that exists.
+	 * @param theoreticalCode
+	 * @return HashOctreeCell
+	 */
+	private HashOctreeCell lookForExistingParent(long theoreticalCode) {
+		if (theoreticalCode == -1L){
+			return null;
+		}
+		
+		HashOctreeCell neighborCell = getCell(theoreticalCode);
+		
+		while(neighborCell == null && theoreticalCode > 0b1000){
+			theoreticalCode = MortonCodes.parentCode(theoreticalCode);
+			neighborCell = getCell(theoreticalCode);
+		}
+		
+		return neighborCell;
+	}
+
+
 	/** find and return a vertex on the finest grid possible, that shares an edge of some octreecell
 	 * with the vertex v and lies in direction nbr_0bxyz (0b100 = +x direction, 0b010 = +y direction
 	 * 0b001 = +z direction). If no neighbor exists, null is returned.
