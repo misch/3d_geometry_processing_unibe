@@ -57,8 +57,8 @@ public class ParentChildDemo {
 		GLHashtree glOT = new GLHashtree(tree);
 		GLHashtree glOT2 = new GLHashtree(tree);
 
-		glOT.configurePreferredShader("shaders/octree_parent_child.vert",
-		"shaders/octree_parent_child.frag",
+		glOT.configurePreferredShader("shaders/octree.vert",
+		"shaders/octree.frag",
 		"shaders/octree_parent_child.geom");
 		
 		glOT2.configurePreferredShader("shaders/octree.vert",
