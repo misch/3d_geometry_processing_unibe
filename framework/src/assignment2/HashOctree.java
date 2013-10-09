@@ -382,9 +382,10 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeCell getParent(HashOctreeCell cell){
+		long cellCode = cell.code;
+		long parentCode = MortonCodes.parentCode(cellCode);
 		
-		//TODO implement this...
-		return null;
+		return getCell(parentCode);
 	}
 	
 	/**

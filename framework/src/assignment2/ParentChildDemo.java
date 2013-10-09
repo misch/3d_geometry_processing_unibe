@@ -11,17 +11,14 @@ import meshes.reader.PlyReader;
 import openGL.MyDisplay;
 
 
-public class Assignment2 {
+public class ParentChildDemo {
 	
 	public static void main(String[] args) throws IOException{
 		
 		mortonCodesDemo();
 		
-		//these demos will run once all methods in the MortonCodes class are
-		//implemented.
 		//hashTreeDemo(ObjReader.readAsPointCloud("./objs/dragon.obj", true));
-		hashTreeDemo(PlyReader.readPointCloud("./objs/octreeTest2.ply", true));
-		
+		hashTreeDemo(PlyReader.readPointCloud("./objs/octreeTest.ply", true));
 	}
 	
 
@@ -58,14 +55,20 @@ public class Assignment2 {
 		MyDisplay display = new MyDisplay();
 		GLPointCloud glPC = new GLPointCloud(pc);
 		GLHashtree glOT = new GLHashtree(tree);
+		GLHashtree glOT2 = new GLHashtree(tree);
 
-		glOT.configurePreferredShader("shaders/octree.vert",
-		"shaders/octree.frag",
-		"shaders/octree.geom");
+		glOT.configurePreferredShader("shaders/octree_parent_child.vert",
+		"shaders/octree_parent_child.frag",
+		"shaders/octree_parent_child.geom");
+		
+		glOT2.configurePreferredShader("shaders/octree.vert",
+				"shaders/octree.frag",
+				"shaders/octree.geom");
 
 		GLHashtree_Vertices glOTv = new GLHashtree_Vertices(tree);
 
 		display.addToDisplay(glOT);
+		display.addToDisplay(glOT2);
 		display.addToDisplay(glOTv);
 
 		display.addToDisplay(glPC);
