@@ -514,7 +514,27 @@ public class HashOctree {
 		return cell;
 		
 	}
+	
+	public ArrayList<HashOctreeCell> getNeighborCells(HashOctreeCell n) {
+		ArrayList<HashOctreeCell> neighbors = new ArrayList<HashOctreeCell>();
 
+		int mask = 0b100;
+
+		for (int i = 0; i < 2; i++) {
+			HashOctreeCell neighborPlus = getNbr_c2c(n,mask);
+			HashOctreeCell neighborMinus = getNbr_c2cMinus(n,mask);
+			
+			if(neighborPlus != null){
+				neighbors.add(neighborPlus);
+			}
+			
+			if(neighborMinus != null){
+				neighbors.add(neighborMinus);
+			}
+			mask = mask >> 1;
+		}
+		return neighbors;
+	}
 
 }
 
