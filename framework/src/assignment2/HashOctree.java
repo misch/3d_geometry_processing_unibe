@@ -447,10 +447,25 @@ public class HashOctree {
 	 * @return
 	 */
 	public HashOctreeVertex getNbr_v2v(HashOctreeVertex v, int nbr_0bxyz){
-
-		//TODO implement this
 		
-		return null;
+		
+		int level = v.maxLvl;
+		
+		HashOctreeVertex neighbor = null;
+		long theoreticalNeighborCode = 0;
+		
+		if (theoreticalNeighborCode == -1L){
+			return null;
+		}
+		
+		while(neighbor == null && v.minLvl <= level){	
+			long code = v.code >> getDepth() - level;
+			theoreticalNeighborCode = MortonCodes.nbrCode(code, level, nbr_0bxyz);
+			neighbor = this.getVertex(theoreticalNeighborCode << getDepth() - level);
+			
+			level--;
+		}
+		return neighbor;
 	}
 	
 	/** find and return maximal depth vertex, that shares an edge of some octreecell
@@ -462,9 +477,23 @@ public class HashOctree {
 	 */
 	public HashOctreeVertex getNbr_v2vMinus(HashOctreeVertex v, int nbr_0bxyz){
 		
-		//TODO implement this
+		int level = v.maxLvl;
 		
-		return null;
+		HashOctreeVertex neighbor = null;
+		long theoreticalNeighborCode = 0;
+		
+		if (theoreticalNeighborCode == -1L){
+			return null;
+		}
+		
+		while(neighbor == null && v.minLvl <= level){	
+			long code = v.code >> getDepth() - level;
+			theoreticalNeighborCode = MortonCodes.nbrCodeMinus(code, level, nbr_0bxyz);
+			neighbor = this.getVertex(theoreticalNeighborCode << getDepth() - level);
+			
+			level--;
+		}
+		return neighbor;
 	}
 	
 	
