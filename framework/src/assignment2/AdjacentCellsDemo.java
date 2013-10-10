@@ -15,7 +15,7 @@ import openGL.MyDisplay;
 public class AdjacentCellsDemo {
 	
 	public static void main(String[] args) throws IOException{
-		hashTreeDemo(PlyReader.readPointCloud("./objs/octreeTest.ply", true));
+		hashTreeDemo(PlyReader.readPointCloud("./objs/octreeTest2.ply", true));
 	}
 		
 	public static void hashTreeDemo(PointCloud pc){
