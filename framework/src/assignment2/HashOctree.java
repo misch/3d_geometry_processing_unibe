@@ -531,9 +531,9 @@ public class HashOctree {
 
 		int mask = 0b100;
 
-		for (int i = 0; i < 2; i++) {
-			HashOctreeCell neighborPlus = getNbr_c2c(n,mask);
-			HashOctreeCell neighborMinus = getNbr_c2cMinus(n,mask);
+		for (int i = 0; i < 3; i++) {
+			HashOctreeCell neighborPlus = getNbr_c2c(n,mask >> i);
+			HashOctreeCell neighborMinus = getNbr_c2cMinus(n,mask >> i);
 			
 			if(neighborPlus != null){
 				neighbors.add(neighborPlus);
@@ -542,7 +542,6 @@ public class HashOctree {
 			if(neighborMinus != null){
 				neighbors.add(neighborMinus);
 			}
-			mask = mask >> 1;
 		}
 		return neighbors;
 	}
