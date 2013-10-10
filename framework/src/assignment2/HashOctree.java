@@ -459,9 +459,9 @@ public class HashOctree {
 		}
 		
 		while(neighbor == null && v.minLvl <= level){	
-			long code = v.code >> getDepth() - level;
+			long code = v.code >> (getDepth() - level);
 			theoreticalNeighborCode = MortonCodes.nbrCode(code, level, nbr_0bxyz);
-			neighbor = this.getVertex(theoreticalNeighborCode << getDepth() - level);
+			neighbor = this.getVertex(theoreticalNeighborCode << (getDepth() - level));
 			
 			level--;
 		}
@@ -563,6 +563,27 @@ public class HashOctree {
 		for (int i = 0; i < 3; i++) {
 			HashOctreeCell neighborPlus = getNbr_c2c(n,mask >> i);
 			HashOctreeCell neighborMinus = getNbr_c2cMinus(n,mask >> i);
+			
+			if(neighborPlus != null){
+				neighbors.add(neighborPlus);
+			}
+			
+			if(neighborMinus != null){
+				neighbors.add(neighborMinus);
+			}
+		}
+		return neighbors;
+	}
+
+
+	public ArrayList<HashOctreeVertex> getNeighborVertices(HashOctreeVertex n) {
+		ArrayList<HashOctreeVertex> neighbors = new ArrayList<HashOctreeVertex>();
+
+		int mask = 0b100;
+
+		for (int i = 0; i < 3; i++) {
+			HashOctreeVertex neighborPlus = getNbr_v2v(n,mask >> i);
+			HashOctreeVertex neighborMinus = getNbr_v2vMinus(n,mask >> i);
 			
 			if(neighborPlus != null){
 				neighbors.add(neighborPlus);
