@@ -454,14 +454,11 @@ public class HashOctree {
 		HashOctreeVertex neighbor = null;
 		long theoreticalNeighborCode = 0;
 		
-		if (theoreticalNeighborCode == -1L){
-			return null;
-		}
 		
-		while(neighbor == null && v.minLvl <= level){	
-			long code = v.code >> (getDepth() - level);
+		while(neighbor == null && v.minLvl <= level && theoreticalNeighborCode != -1L){	
+			long code = v.code >> ((getDepth() - level)*3);
 			theoreticalNeighborCode = MortonCodes.nbrCode(code, level, nbr_0bxyz);
-			neighbor = this.getVertex(theoreticalNeighborCode << (getDepth() - level));
+			neighbor = this.getVertex(theoreticalNeighborCode << ((getDepth() - level)*3));
 			
 			level--;
 		}
@@ -482,14 +479,10 @@ public class HashOctree {
 		HashOctreeVertex neighbor = null;
 		long theoreticalNeighborCode = 0;
 		
-		if (theoreticalNeighborCode == -1L){
-			return null;
-		}
-		
-		while(neighbor == null && v.minLvl <= level){	
-			long code = v.code >> getDepth() - level;
+		while(neighbor == null && v.minLvl <= level && theoreticalNeighborCode != -1L){	
+			long code = v.code >> ((getDepth() - level)*3);
 			theoreticalNeighborCode = MortonCodes.nbrCodeMinus(code, level, nbr_0bxyz);
-			neighbor = this.getVertex(theoreticalNeighborCode << getDepth() - level);
+			neighbor = this.getVertex(theoreticalNeighborCode << ((getDepth() - level)*3));
 			
 			level--;
 		}

@@ -23,13 +23,13 @@ public class GLHashtreeAdjacentVertices extends GLDisplayable {
 	private HashOctree myTree;
 	public GLHashtreeAdjacentVertices(HashOctree tree) {
 		
-		super(6*tree.numberOfLeafs());
+		super(6*tree.getVertices().size());
 		this.myTree = tree;
 		// Add Vertices
 		// Multiplication by 6 because every vertex will be sent into the shader 6 times,
 		// with one of the possibly 6 neighbor cells.
-		float[] verts = new float[6*myTree.numberOfLeafs()*3];
-		float[] neighborVertices = new float[6*myTree.numberOfLeafs()*3];
+		float[] verts = new float[6*myTree.getVertices().size()*3];
+		float[] neighborVertices = new float[6*myTree.getVertices().size()*3];
 		
 		
 		int idx = 0;
@@ -46,7 +46,7 @@ public class GLHashtreeAdjacentVertices extends GLDisplayable {
 			 }
 		}
 		
-		int[] ind = new int[myTree.numberOfLeafs()*6];
+		int[] ind = new int[myTree.getVertices().size()*6];
 		for(int i = 0; i < ind.length; i++)	{
 			ind[i]=i;
 		}
