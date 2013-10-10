@@ -46,7 +46,7 @@ public class GLHashtreeAdjacentCells extends GLDisplayable {
 			 }
 		}
 		
-		int[] ind = new int[myTree.numberOfLeafs()];
+		int[] ind = new int[myTree.numberOfLeafs()*6];
 		for(int i = 0; i < ind.length; i++)	{
 			ind[i]=i;
 		}
