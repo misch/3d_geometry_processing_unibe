@@ -4,13 +4,15 @@ import java.util.ArrayList;
 
 import javax.vecmath.Point3f;
 
+import assignment3.MarchableCube;
+
 
 /**
  * 
  * @author Alf
  *
  */
-public class HashOctreeVertex {
+public class HashOctreeVertex implements MarchableCube{
 	/** The morton code of this vertex*/
 	public long code;
 	/** Its position*/
@@ -47,5 +49,19 @@ public class HashOctreeVertex {
 	public String toString() {
 		return Long.toBinaryString(code);
 	}
-	
+
+	@Override
+	public Point3f getPosition() {
+		return this.position;
+	}
+
+	@Override
+	public MarchableCube getCornerElement(int Obxyz, HashOctree tree) {
+		return tree.getNbr_v2c(this, Obxyz);
+	}
+
+	@Override
+	public int getIndex() {
+		return this.index;
+	}
 }
