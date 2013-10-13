@@ -52,6 +52,10 @@ public class MarchingCubes {
 		ArrayList<HashOctreeCell> cells = tree.getLeafs();
 		Point2i[] triangles_to_generate = new Point2i[15];
 		
+		for (int i = 0; i < triangles_to_generate.length; i++){
+			triangles_to_generate[i] = new Point2i();
+		}
+		
 		for (HashOctreeCell cell : cells){
 			float[] values = new float[8];
 			for (int i = 0; i < 8; i++){
@@ -71,6 +75,7 @@ public class MarchingCubes {
 					triangleIndices = new int[3];
 				}
 				
+				// TODO: check for null...?
 				MarchableCube  cornerElementA = cell.getCornerElement(point.x, tree);
 				MarchableCube  cornerElementB = cell.getCornerElement(point.y, tree);
 				

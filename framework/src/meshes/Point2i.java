@@ -3,6 +3,10 @@ package meshes;
 public class Point2i {
 	public int x,y;
 
+	public Point2i(){
+		this(0,0);
+	}
+	
 	public Point2i(int i, int j) {
 		x = i;
 		y = j;
