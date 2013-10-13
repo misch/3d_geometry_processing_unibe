@@ -2,13 +2,16 @@ package assignment3;
 
 import java.util.ArrayList;
 
+import javax.vecmath.Point3f;
+
 import meshes.Point2i;
 import meshes.WireframeMesh;
 import assignment2.HashOctree;
+import assignment2.HashOctreeCell;
 
 
 /**
- * Implwmwnr your Marching cubes algorithms here.
+ * Implement your Marching cubes algorithms here.
  * @author bertholet
  *
  */
@@ -46,7 +49,53 @@ public class MarchingCubes {
 		this.val = byVertex;
 		this.result = new WireframeMesh();
 		
-		//do your stuff...
+		ArrayList<HashOctreeCell> cells = tree.getLeafs();
+		Point2i[] triangles_to_generate = new Point2i[15];
+		
+		for (HashOctreeCell cell : cells){
+			float[] values = new float[8];
+			for (int i = 0; i < 8; i++){
+				MarchableCube corner = cell.getCornerElement(i, tree); 
+				values[i] =  val.get(corner.getIndex());
+			}
+			MCTable.resolve(values, triangles_to_generate);
+			
+			
+			int addedVertices = 0;
+			int[] triangleIndices = new int[3];
+			
+			for(Point2i point : triangles_to_generate){
+				if(addedVertices ==3 ){
+					result.faces.add(triangleIndices);
+					addedVertices = 0;
+					triangleIndices = new int[3];
+				}
+				
+				MarchableCube  cornerElementA = cell.getCornerElement(point.x, tree);
+				MarchableCube  cornerElementB = cell.getCornerElement(point.y, tree);
+				
+				Point3f pos_a = new Point3f(cornerElementA.getPosition());
+				Point3f pos_b = new Point3f(cornerElementB.getPosition());
+				
+				float a = val.get(cornerElementA.getIndex());
+				float b = val.get(cornerElementB.getIndex());			
+				
+				float alpha = a/(a-b);
+				
+				pos_a.scale(1-alpha);
+				pos_b.scale(alpha);
+				
+				Point3f pos = pos_a;
+				pos.add(pos_b);
+				
+				result.vertices.add(pos);
+				triangleIndices[addedVertices] = result.vertices.size()-1;
+				
+				addedVertices++;
+			}
+		}
+		
+		
 		
 	}
 	
@@ -55,7 +104,7 @@ public class MarchingCubes {
 	 */
 	public void dualMC(ArrayList<Float> byVertex) {
 		
-		//do your stuff
+		//TODO: do your stuff
 	}
 	
 	/**
@@ -64,7 +113,7 @@ public class MarchingCubes {
 	 */
 	private void pushCube(MarchableCube n){
 		
-		//do your stuff
+		//TODO: do your stuff
 		
 		
 	}

@@ -54,7 +54,7 @@ public class MCTable {
 		//switch first, second bit and third, fourth bit to get to the internal vertex enumeration
 		mc_case = (mc_case & 0b00110011) | //these bits stay
 				((mc_case & 0b10001000)>>1)| //these bits are shifted right
-				((mc_case & 0b01000100)<<1); //these bits are shitfed left
+				((mc_case & 0b01000100)<<1); //these bits are shifted left
 		
 		//get the table entry
 		int[] tri = triTable[mc_case];
