@@ -75,7 +75,10 @@ public class MarchingCubes {
 					triangleIndices = new int[3];
 				}
 				
-				// TODO: check for null...?
+				if (point.x == -1){
+					break;
+				}
+				
 				MarchableCube  cornerElementA = cell.getCornerElement(point.x, tree);
 				MarchableCube  cornerElementB = cell.getCornerElement(point.y, tree);
 				
