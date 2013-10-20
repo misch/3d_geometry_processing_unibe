@@ -625,7 +625,7 @@ public class HashOctree {
 			if(! c.isLeaf() || c.points.size() == 0){
 				continue;
 			}
-			for(int i = 0b100; i != 0; i= i>>1){
+			for(int i = 0b100; i != 0; i >>= 1){
 				HashOctreeCell temp = getNbr_c2c(c, i);
 				if(temp!= null && temp.isLeaf() && temp.lvl < c.lvl){
 					splitNode(temp, stack);
