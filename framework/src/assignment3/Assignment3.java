@@ -39,8 +39,12 @@ public class Assignment3 {
 		
 		//Do your magic here...
 		MarchingCubes mc = new MarchingCubes(tree);
+		MarchingCubes dualMC = new MarchingCubes(tree);
+		
 		mc.primaryMC(x);
+		dualMC.dualMC(x);
 		GLDisplayable primaryMarchingCube = new GLWireframeMesh(mc.result);
+		GLDisplayable dualMarchingCube = new GLWireframeMesh(dualMC.result);
 		
 		//And show off...
 		
@@ -48,7 +52,9 @@ public class Assignment3 {
 		//red = positive, green = 0);
 		MyDisplay d = new MyDisplay();
 		primaryMarchingCube.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
+		dualMarchingCube.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
 		d.addToDisplay(primaryMarchingCube);
+		d.addToDisplay(dualMarchingCube);
 		
 		GLHashtree_Vertices gl_v = new GLHashtree_Vertices(tree);
 		gl_v.addFunctionValues(x);

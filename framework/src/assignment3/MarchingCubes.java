@@ -8,6 +8,7 @@ import meshes.Point2i;
 import meshes.WireframeMesh;
 import assignment2.HashOctree;
 import assignment2.HashOctreeCell;
+import assignment2.HashOctreeVertex;
 
 
 /**
@@ -48,80 +49,94 @@ public class MarchingCubes {
 	public void primaryMC(ArrayList<Float> byVertex) {
 		this.val = byVertex;
 		this.result = new WireframeMesh();
-		
-		ArrayList<HashOctreeCell> cells = tree.getLeafs();
-		Point2i[] triangles_to_generate = new Point2i[15];
-		
-		for (int i = 0; i < triangles_to_generate.length; i++){
-			triangles_to_generate[i] = new Point2i();
+				
+		for (HashOctreeCell cell : tree.getLeafs()){
+				pushCube(cell);
 		}
-		
-		for (HashOctreeCell cell : cells){
-			float[] values = new float[8];
-			for (int i = 0; i < 8; i++){
-				MarchableCube corner = cell.getCornerElement(i, tree); 
-				values[i] =  val.get(corner.getIndex());
-			}
-			MCTable.resolve(values, triangles_to_generate);
-			
-			
-			int addedVertices = 0;
-			int[] triangleIndices = new int[3];
-			
-			for(Point2i point : triangles_to_generate){
-				if(addedVertices ==3 ){
-					result.faces.add(triangleIndices);
-					addedVertices = 0;
-					triangleIndices = new int[3];
-				}
-				
-				if (point.x == -1){
-					break;
-				}
-				
-				MarchableCube  cornerElementA = cell.getCornerElement(point.x, tree);
-				MarchableCube  cornerElementB = cell.getCornerElement(point.y, tree);
-				
-				Point3f pos_a = new Point3f(cornerElementA.getPosition());
-				Point3f pos_b = new Point3f(cornerElementB.getPosition());
-				
-				float a = val.get(cornerElementA.getIndex());
-				float b = val.get(cornerElementB.getIndex());			
-				
-				float alpha = a/(a-b);
-				
-				pos_a.scale(1-alpha);
-				pos_b.scale(alpha);
-				
-				Point3f pos = pos_a;
-				pos.add(pos_b);
-				
-				result.vertices.add(pos);
-				triangleIndices[addedVertices] = result.vertices.size()-1;
-				
-				addedVertices++;
-			}
-		}
-		
-		
-		
 	}
+	
 	
 	/**
 	 * Perform dual marchingCubes on the tree
 	 */
 	public void dualMC(ArrayList<Float> byVertex) {
+		this.val = new ArrayList<Float>(byVertex);
+		this.result = new WireframeMesh();
 		
-		//TODO: do your stuff
+		
+		for (HashOctreeCell cell: tree.getLeafs()) {
+            float cellValue = 0;
+            for(int i = 0; i < 8; i++) {
+                    MarchableCube corner = cell.getCornerElement(i, tree);
+                    cellValue += byVertex.get(corner.getIndex())/8;
+            }
+            this.val.set(cell.getIndex(), cellValue);
+    }
+		
+		
+		for (HashOctreeVertex vertex : tree.getVertices()){
+			if(tree.isOnBoundary(vertex)){
+				continue;
+			}
+			pushCube(vertex);
+		}
 	}
 	
 	/**
 	 * March a single cube: compute the triangles and add them to the wireframe model
 	 * @param n
 	 */
-	private void pushCube(MarchableCube n){
+	private void pushCube(MarchableCube c){
+		Point2i[] triangles_to_generate = new Point2i[15];
 		
-		//TODO: do your stuff
+		for (int i = 0; i < triangles_to_generate.length; i++){
+			triangles_to_generate[i] = new Point2i();
+		}
+		
+		float[] values = new float[8];
+		for (int i = 0; i < 8; i++){
+			MarchableCube corner = c.getCornerElement(i, tree); 
+			values[i] =  val.get(corner.getIndex());
+		}
+		MCTable.resolve(values, triangles_to_generate);
+		
+		
+		int addedVertices = 0;
+		int[] triangleIndices = new int[3];
+		
+		for(Point2i point : triangles_to_generate){
+			if(addedVertices ==3 ){
+				result.faces.add(triangleIndices);
+				addedVertices = 0;
+				triangleIndices = new int[3];
+			}
+			
+			if (point.x == -1){
+				break;
+			}
+			
+			MarchableCube  cornerElementA = c.getCornerElement(point.x, tree);
+			MarchableCube  cornerElementB = c.getCornerElement(point.y, tree);
+			
+			Point3f pos_a = new Point3f(cornerElementA.getPosition());
+			Point3f pos_b = new Point3f(cornerElementB.getPosition());
+			
+			float a = val.get(cornerElementA.getIndex());
+			float b = val.get(cornerElementB.getIndex());			
+			
+			float alpha = a/(a-b);
+			
+			pos_a.scale(1-alpha);
+			pos_b.scale(alpha);
+			
+			Point3f pos = pos_a;
+			pos.add(pos_b);
+			
+			result.vertices.add(pos);
+			triangleIndices[addedVertices] = result.vertices.size()-1;
+			
+			addedVertices++ ;
+		}
 		
 		
 	}
