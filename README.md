@@ -9,3 +9,7 @@ This repository contains the exercise stuff of the 3D Geometry Processing lectur
 
 ##visualized mean curvature
 ![Cat - Mean Curvature visualization](/screenshots/cat_mean_curvature.PNG)
+
+##surface reconstruction - this should be a sphere... O.o
+![Sphere - Surface reconstruction](/screenshots/sphere1.png)
+![Sphere - Surface reconstruction](/screenshots/sphere2.png)
