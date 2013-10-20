@@ -35,3 +35,6 @@ local.properties
 *.jar
 *.war
 *.ear
+
+# Python #
+framework/python/temp/*
