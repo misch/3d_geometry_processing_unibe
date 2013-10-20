@@ -1,5 +1,6 @@
 package assignment3;
 
+import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLHashtree;
 import glWrapper.GLHashtree_Vertices;
 import glWrapper.GLWireframeMesh;
@@ -10,7 +11,10 @@ import java.util.ArrayList;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import meshes.HalfEdgeStructure;
 import meshes.PointCloud;
+import meshes.exception.DanglingTriangleException;
+import meshes.exception.MeshNotOrientedException;
 import openGL.MyDisplay;
 import openGL.gl.GLDisplayable;
 import assignment2.HashOctree;
@@ -46,15 +50,47 @@ public class Assignment3 {
 		GLDisplayable primaryMarchingCube = new GLWireframeMesh(mc.result);
 		GLDisplayable dualMarchingCube = new GLWireframeMesh(dualMC.result);
 		
+		HalfEdgeStructure smoothedMarchingCube = new HalfEdgeStructure();
+		HalfEdgeStructure smoothedDualMarchingCube = new HalfEdgeStructure();
+		
+		try {
+			smoothedMarchingCube.init(mc.result);
+		} catch (MeshNotOrientedException | DanglingTriangleException e) {
+			e.printStackTrace();
+			return;
+		}
+		
+		try {
+			smoothedDualMarchingCube.init(dualMC.result);
+		}
+		catch (MeshNotOrientedException | DanglingTriangleException e){
+			e.printStackTrace();
+			return;
+		}
+		
+		
+		
+		
 		//And show off...
 		
 		//visualization of the per vertex values (blue = negative, 
 		//red = positive, green = 0);
 		MyDisplay d = new MyDisplay();
-		primaryMarchingCube.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
-		dualMarchingCube.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
-		d.addToDisplay(primaryMarchingCube);
-		d.addToDisplay(dualMarchingCube);
+		
+		GLHalfEdgeStructure glSmoothedMarchingCubes = new GLHalfEdgeStructure(smoothedMarchingCube);
+		GLHalfEdgeStructure glSmoothedDualMarchingCubes = new GLHalfEdgeStructure(smoothedDualMarchingCube);
+		glSmoothedMarchingCubes.smooth(1);
+		glSmoothedDualMarchingCubes.smooth(1);
+		glSmoothedMarchingCubes.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
+		glSmoothedDualMarchingCubes.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
+		d.addToDisplay(glSmoothedMarchingCubes);
+		d.addToDisplay(glSmoothedDualMarchingCubes);
+//		primaryMarchingCube.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
+//		dualMarchingCube.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
+//		d.addToDisplay(primaryMarchingCube);
+//		d.addToDisplay(dualMarchingCube);
+		
+		
 		
 		GLHashtree_Vertices gl_v = new GLHashtree_Vertices(tree);
 		gl_v.addFunctionValues(x);

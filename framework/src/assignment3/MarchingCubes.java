@@ -1,6 +1,7 @@
 package assignment3;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.vecmath.Point3f;
 
@@ -27,6 +28,8 @@ public class MarchingCubes {
 	//per marchable cube values
 	private ArrayList<Float> val;
 	
+	// this prevents the algorithm(s) to generete some vertices more than once
+	private HashMap<Point2i, Integer> createdVertices = new HashMap<Point2i, Integer>();
 	
 	
 	
@@ -86,6 +89,9 @@ public class MarchingCubes {
 	 * March a single cube: compute the triangles and add them to the wireframe model
 	 * @param n
 	 */
+
+	// TODO: Refactor that bullshit down there! OMG!
+	// This method is so fat that it would kill the ducks in the lake to get their bread!
 	private void pushCube(MarchableCube c){
 		Point2i[] triangles_to_generate = new Point2i[15];
 		
@@ -105,43 +111,73 @@ public class MarchingCubes {
 		int[] triangleIndices = new int[3];
 		
 		for(Point2i point : triangles_to_generate){
-			if(addedVertices ==3 ){
-				result.faces.add(triangleIndices);
+			
+			// If three new vertices are available, add a new triangle to WireframeMesh.
+			if (addedVertices == 3) {
+				if (!degeneratedTriangle(triangleIndices)) {
+					result.faces.add(triangleIndices);
+				}
 				addedVertices = 0;
 				triangleIndices = new int[3];
 			}
 			
+			
+			// If we already added the last vertex, break
 			if (point.x == -1){
 				break;
+				
 			}
 			
-			MarchableCube  cornerElementA = c.getCornerElement(point.x, tree);
-			MarchableCube  cornerElementB = c.getCornerElement(point.y, tree);
+			// If the vertex in question has already been computed in a previous step,
+			// just add the index of it to the indices for the new triangle.
+			if (alreadyGenerated(c,point)){
+				triangleIndices[addedVertices] = createdVertices.get(key(c,point));
+			}
+			else{
+				MarchableCube  cornerElementA = c.getCornerElement(point.x, tree);
+				MarchableCube  cornerElementB = c.getCornerElement(point.y, tree);
 			
-			Point3f pos_a = new Point3f(cornerElementA.getPosition());
-			Point3f pos_b = new Point3f(cornerElementB.getPosition());
+				Point3f pos = interpolatePosition(cornerElementA, cornerElementB);
+
+				result.vertices.add(pos);
+				int newIndex = result.vertices.size()-1;
+				triangleIndices[addedVertices] = newIndex;
 			
-			float a = val.get(cornerElementA.getIndex());
-			float b = val.get(cornerElementB.getIndex());			
-			
-			float alpha = a/(a-b);
-			
-			pos_a.scale(1-alpha);
-			pos_b.scale(alpha);
-			
-			Point3f pos = pos_a;
-			pos.add(pos_b);
-			
-			result.vertices.add(pos);
-			triangleIndices[addedVertices] = result.vertices.size()-1;
-			
+				createdVertices.put(key(c,point), newIndex);
+			}
 			addedVertices++ ;
 		}
-		
-		
 	}
 
 	
+	private boolean degeneratedTriangle(int[] triangleIndices) {
+		return triangleIndices[0] == triangleIndices[1]
+				|| triangleIndices[1] == triangleIndices[2]
+				|| triangleIndices[0] == triangleIndices[2];
+	}
+
+	private boolean alreadyGenerated(MarchableCube c, Point2i point) {
+		return createdVertices.containsKey(key(c,point));
+	}
+
+	private Point3f interpolatePosition(MarchableCube cornerElementA, MarchableCube cornerElementB) {
+		Point3f pos_a = new Point3f(cornerElementA.getPosition());
+		Point3f pos_b = new Point3f(cornerElementB.getPosition());
+		
+		float a = val.get(cornerElementA.getIndex());
+		float b = val.get(cornerElementB.getIndex());			
+		
+		float alpha = a/(a-b);
+		
+		pos_a.scale(1-alpha);
+		pos_b.scale(alpha);
+		
+		Point3f pos = pos_a;
+		pos.add(pos_b);
+		
+		return pos;
+	}
+
 	/**
 	 * Get a nicely marched wireframe mesh...
 	 * @return
