@@ -94,10 +94,35 @@ public class SSDMatrices {
 	 * of pointcloud.point[row/3]; 
 	 */
 	public static CSRMatrix D1Term(HashOctree tree, PointCloud cloud) {
-		
-		//TODO
-		
-		return null;
+
+		CSRMatrix result = new CSRMatrix(0, tree.numberofVertices());
+
+		for (Point3f point : cloud.points) {
+			
+			HashOctreeCell cell = tree.getCell(point);
+			
+			// Gradients:
+			// The D1-Term gets multiplied by the function values later -
+			// therefore only put -1 or 1 to decide which function values
+			// have to be subtracted from each other.
+			for(int i = 0; i<8; i++){
+				
+				int index = cell.getCornerElement(i, tree).getIndex();
+				
+				float gradX = ((i & 0b100) == 0b100 ? 1 : -1)/(4*cell.side);
+				result.addRow();
+				result.lastRow().add(new col_val(index,gradX));
+				
+				float gradY = ((i & 0b010) == 0b010 ? 1 : -1)/(4*cell.side);
+				result.addRow();
+				result.lastRow().add(new col_val(index,gradY));
+				
+				float gradZ = ((i & 0b001) == 0b001 ? 1 : -1)/(4*cell.side);
+				result.addRow();
+				result.lastRow().add(new col_val(index,gradZ));				
+			}
+		}
+		return result;
 	}
 	
 	

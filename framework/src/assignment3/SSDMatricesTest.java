@@ -22,13 +22,14 @@ public class SSDMatricesTest {
 
 	private PointCloud pointCloud;
 	private HashOctree tree;
-	private CSRMatrix D_0;
+	private CSRMatrix D_0, D_1;
 	
 	@Before
 	public void setUp() throws Exception {
         pointCloud = ObjReader.readAsPointCloud("objs/teapot.obj", true);
         tree = new HashOctree(pointCloud,8,1,1f);
         D_0 = SSDMatrices.D0Term(tree, pointCloud);
+        D_1 = SSDMatrices.D1Term(tree, pointCloud);
 	}
 
     @Test
@@ -57,5 +58,11 @@ public class SSDMatricesTest {
                     Point3f original = pointCloud.points.get(i);
                     assertTrue(original.distance(computed) < 0.00001f);
             }
+    }
+    
+    @Test
+    public void D1shouldHaveRightSize() {
+            assertEquals(D_1.nCols, tree.getVertices().size());
+            assertEquals(D_1.nRows, pointCloud.points.size()*3);
     }
 }
