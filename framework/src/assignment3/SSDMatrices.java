@@ -1,5 +1,7 @@
 package assignment3;
 
+import java.util.ArrayList;
+
 import javax.vecmath.Point3f;
 
 import meshes.PointCloud;
@@ -105,21 +107,26 @@ public class SSDMatrices {
 			// The D1-Term gets multiplied by the function values later -
 			// therefore only put -1 or 1 to decide which function values
 			// have to be subtracted from each other.
+			result.addRow();
+			ArrayList<col_val> xRow =  result.lastRow();
+			result.addRow();
+			ArrayList<col_val> yRow =  result.lastRow();
+			result.addRow();
+			ArrayList<col_val> zRow =  result.lastRow();
+			
 			for(int i = 0; i<8; i++){
 				
 				int index = cell.getCornerElement(i, tree).getIndex();
 				
 				float gradX = ((i & 0b100) == 0b100 ? 1 : -1)/(4*cell.side);
-				result.addRow();
-				result.lastRow().add(new col_val(index,gradX));
+				xRow.add(new col_val(index,gradX));
+				
 				
 				float gradY = ((i & 0b010) == 0b010 ? 1 : -1)/(4*cell.side);
-				result.addRow();
-				result.lastRow().add(new col_val(index,gradY));
+				yRow.add(new col_val(index,gradY));
 				
 				float gradZ = ((i & 0b001) == 0b001 ? 1 : -1)/(4*cell.side);
-				result.addRow();
-				result.lastRow().add(new col_val(index,gradZ));				
+				zRow.add(new col_val(index,gradZ));				
 			}
 		}
 		return result;
