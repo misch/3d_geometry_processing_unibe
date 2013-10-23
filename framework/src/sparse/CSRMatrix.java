@@ -3,12 +3,11 @@ package sparse;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import sparse.CSRMatrix.col_val;
+import javax.vecmath.Point3f;
 
 
 /**
@@ -170,8 +169,24 @@ public class CSRMatrix {
 			
 		}
 	}
-	
-	
+
+	public void multPoints(ArrayList<Point3f> other, ArrayList<Point3f> result) {
+		if (other.size() != nCols)
+			throw new IllegalArgumentException(
+					"Matrix size does not match to size of vector!");
+		result.clear();
+		result.ensureCapacity(nRows);
+		for (ArrayList<col_val> row : rows) {
+			Point3f res = new Point3f();
+			for (col_val c : row) {
+				Point3f o = new Point3f(other.get(c.col));
+				o.scale(c.val);
+				res.add(o);
+			}
+			result.add(res);
+		}
+	}
+
 	/**
 	 * Multiply this matrix with the vector other and write the result into result.
 	 * @param other

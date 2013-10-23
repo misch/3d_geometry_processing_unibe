@@ -74,50 +74,16 @@ public class SSDMatrices {
 			relativeCoordinates.sub(c_000); 	// (x-x0,y-y0,z-z0), cf. slide #37 again
 			relativeCoordinates.scale(1/cell.side); 	// = (x1-x0) = (y1-y0) = (z1-z0), cf. slide #37
 			
-			// interpolation along x
-			
-			Point3f c_00 = new Point3f();
-			c_00.x = c_000.x*(1-relativeCoordinates.x) + cell.getCornerElement(0b100, tree).getPosition().x * relativeCoordinates.x;
-			c_00.y = c_000.y*(1-relativeCoordinates.x) + cell.getCornerElement(0b100, tree).getPosition().y * relativeCoordinates.x;
-			c_00.z = c_000.z*(1-relativeCoordinates.x) + cell.getCornerElement(0b100, tree).getPosition().z * relativeCoordinates.x;
-			
-			Point3f c_10 = new Point3f();
-			c_10.x = cell.getCornerElement(0b010, tree).getPosition().x*(1-relativeCoordinates.x) + cell.getCornerElement(0b110, tree).getPosition().x * relativeCoordinates.x;
-			c_10.y = cell.getCornerElement(0b010, tree).getPosition().y*(1-relativeCoordinates.x) + cell.getCornerElement(0b110, tree).getPosition().y * relativeCoordinates.x;
-			c_10.z = cell.getCornerElement(0b010, tree).getPosition().z*(1-relativeCoordinates.x) + cell.getCornerElement(0b110, tree).getPosition().z * relativeCoordinates.x;
-			
-			Point3f c_01 = new Point3f();
-			c_01.x = cell.getCornerElement(0b001, tree).getPosition().x*(1-relativeCoordinates.x) + cell.getCornerElement(0b101, tree).getPosition().x * relativeCoordinates.x;
-			c_01.y = cell.getCornerElement(0b001, tree).getPosition().y*(1-relativeCoordinates.x) + cell.getCornerElement(0b101, tree).getPosition().y * relativeCoordinates.x;
-			c_01.z = cell.getCornerElement(0b001, tree).getPosition().z*(1-relativeCoordinates.x) + cell.getCornerElement(0b101, tree).getPosition().z * relativeCoordinates.x;
-			
-			Point3f c_11 = new Point3f();
-			c_10.x = cell.getCornerElement(0b011, tree).getPosition().x*(1-relativeCoordinates.x) + cell.getCornerElement(0b111, tree).getPosition().x * relativeCoordinates.x;
-			c_10.y = cell.getCornerElement(0b011, tree).getPosition().y*(1-relativeCoordinates.x) + cell.getCornerElement(0b111, tree).getPosition().y * relativeCoordinates.x;
-			c_10.z = cell.getCornerElement(0b011, tree).getPosition().z*(1-relativeCoordinates.x) + cell.getCornerElement(0b111, tree).getPosition().z * relativeCoordinates.x;
-			
-			// interpolation along y
-			
-			Point3f c_1 = new Point3f();
-			c_1.x = c_01.x * (1-relativeCoordinates.y) + c_11.x * relativeCoordinates.y;
-			c_1.y = c_01.y * (1-relativeCoordinates.y) + c_11.y * relativeCoordinates.y;
-			c_1.z = c_01.z * (1-relativeCoordinates.y) + c_11.z * relativeCoordinates.y;
-			
-			Point3f c_0 = new Point3f();
-			c_0.x = c_00.x * (1-relativeCoordinates.y) + c_10.x * relativeCoordinates.y;
-			c_0.y = c_00.y * (1-relativeCoordinates.y) + c_10.y * relativeCoordinates.y;
-			c_0.z = c_00.z * (1-relativeCoordinates.y) + c_10.z * relativeCoordinates.y;
-			
-			// interpolation along z
-			
-			Point3f c = new Point3f();
-			c.x = c_0.x * (1-relativeCoordinates.z) + c_1.x * relativeCoordinates.z;
-			c.y = c_0.y * (1-relativeCoordinates.z) + c_1.y * relativeCoordinates.z;
-			c.z = c_0.z * (1-relativeCoordinates.z) + c_1.z * relativeCoordinates.z;
-			
-			
+			result.addRow();
+			for (int i = 0; i<8; i++){
+				float weight = (0b100 & i) == 0b100 ? relativeCoordinates.x : 1-relativeCoordinates.x;
+				weight *= (0b010 & i) == 0b010 ? relativeCoordinates.y : 1-relativeCoordinates.y;
+				weight *= (0b001 & i) == 0b001 ? relativeCoordinates.z : 1-relativeCoordinates.z;
+				
+				result.lastRow().add(new col_val(cell.getCornerElement(i, tree).getIndex(),weight));
+			}			
 		}
-		return null;
+		return result;
 	}
 
 	/**
