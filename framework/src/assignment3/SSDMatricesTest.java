@@ -65,4 +65,26 @@ public class SSDMatricesTest {
             assertEquals(D_1.nCols, tree.getVertices().size());
             assertEquals(D_1.nRows, pointCloud.points.size()*3);
     }
+    
+    @Test
+    public void D1onLinearFunctionShouldYieldCoefficiants(){
+    	ArrayList<Float> f = new ArrayList<Float>();
+    	float a = 7, b = 3, c = 1;
+    	
+    	// D1 has n columns if n is the number of tree vertices
+    	// ==> f will have n rows.
+    	for (MarchableCube treeVertex : tree.getVertices()){
+    		Point3f pos = treeVertex.getPosition();
+    		float linFunc = a*pos.x + b*pos.y + c*pos.z;
+    		f.add(linFunc);
+    	}
+    	
+    	ArrayList<Float> result = new ArrayList<Float>();
+		D_1.mult(f, result);
+		for (int i = 0; i < result.size()/3; i++ ){
+			assertEquals(a, result.get(i*3), 0.001f);
+			assertEquals(b, result.get(i*3+1), 0.001f);
+			assertEquals(c, result.get(i*3+2), 0.001f);
+		}
+    }
 }
