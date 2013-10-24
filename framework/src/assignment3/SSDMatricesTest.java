@@ -109,6 +109,5 @@ public class SSDMatricesTest {
 			assertEquals(0, result.get(i*3+1), 0.001f);
 			assertEquals(0, result.get(i*3+2), 0.001f);
 		}
-    	
     }
 }

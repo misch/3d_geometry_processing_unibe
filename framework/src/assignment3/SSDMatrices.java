@@ -24,14 +24,14 @@ public class SSDMatrices {
 	public static CSRMatrix eye(int nRows, int nCols){
 		CSRMatrix eye = new CSRMatrix(0, nCols);
 		
-		//initialize the identity matrix part
+		// initialize the identity matrix part
 		for(int i = 0; i< Math.min(nRows, nCols); i++){
 			eye.addRow();
 			eye.lastRow().add(
 						//column i, value 1
 					new col_val(i,1));
 		}
-		//fill up the matrix with empty rows.
+		// fill up the matrix with empty rows.
 		for(int i = Math.min(nRows, nCols); i < nRows; i++){
 			eye.addRow();
 		}
@@ -133,7 +133,11 @@ public class SSDMatrices {
 	}
 	
 	
-	
+	/**
+	 * A simpler version of the regularization term which enforces smoothness
+	 * of the resulting energy.
+	 * One column per octree vertex, one row per vertex-neighbor-triple
+	 */
 	public static CSRMatrix RTerm(HashOctree tree){
 		CSRMatrix result = new CSRMatrix(0, tree.numberofVertices());
 		float totalScale = 0;
@@ -170,21 +174,7 @@ public class SSDMatrices {
 				
 				totalScale += dist_ij * dist_kj;	
 			}
-
-//			int xMask = 0b100, yMask = 0b010, zMask = 0b001;
-//			
-//			HashOctreeVertex positiveNeighX = tree.getNbr_v2v(vertex, xMask);
-//			HashOctreeVertex negativeNeighX = tree.getNbr_v2vMinus(vertex, xMask);
-//			
-//			HashOctreeVertex positiveNeighY = tree.getNbr_v2v(vertex, yMask);
-//			HashOctreeVertex negativeNeighY = tree.getNbr_v2vMinus(vertex, yMask);
-//			
-//			HashOctreeVertex positiveNeighZ = tree.getNbr_v2v(vertex, zMask);
-//			HashOctreeVertex negativeNeighZ = tree.getNbr_v2vMinus(vertex, zMask);
-			
-			
 		}
-		
 		result.scale(1/totalScale);
 		return result;
 	}
