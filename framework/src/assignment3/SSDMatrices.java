@@ -1,8 +1,10 @@
 package assignment3;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.vecmath.Point3f;
+import javax.vecmath.Vector3f;
 
 import meshes.PointCloud;
 import sparse.CSRMatrix;
@@ -201,9 +203,30 @@ public class SSDMatrices {
 		
 				
 		LinearSystem system = new LinearSystem();
-		system.mat = null;
-		system.b = null;
+		system.mat = new CSRMatrix(0,tree.getVertices().size());
+		system.b = new ArrayList<Float>();
+		
+		// setup matrix
+		CSRMatrix D0 = D0Term(tree, pc); 
+		system.mat.append(D0, (float)Math.sqrt(lambda0/tree.numberofVertices()));		
+				
+		CSRMatrix D1 = D1Term(tree, pc); 
+		system.mat.append(D1, (float)Math.sqrt(lambda1/tree.numberofVertices()));
+		
+		CSRMatrix R = RTerm(tree); 
+		system.mat.append(R, (float)Math.sqrt(lambda2));
+		
+		// setup b
+		system.b.addAll(new ArrayList<Float>(Collections.nCopies(D0.nRows,0f)));
+		
+		for (Vector3f normal: pc.normals){
+			system.b.add(normal.x*(float)Math.sqrt(lambda1/tree.numberofVertices()));
+			system.b.add(normal.y*(float)Math.sqrt(lambda1/tree.numberofVertices()));
+			system.b.add(normal.z*(float)Math.sqrt(lambda1/tree.numberofVertices()));
+		}
+		
+		system.b.addAll(new ArrayList<Float>(Collections.nCopies(R.nRows,0f)));
+		
 		return system;
 	}
-
 }
