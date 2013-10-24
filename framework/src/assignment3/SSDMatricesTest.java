@@ -22,7 +22,7 @@ public class SSDMatricesTest {
 
 	private PointCloud pointCloud;
 	private HashOctree tree;
-	private CSRMatrix D_0, D_1;
+	private CSRMatrix D_0, D_1, R;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -30,6 +30,7 @@ public class SSDMatricesTest {
         tree = new HashOctree(pointCloud,8,1,1f);
         D_0 = SSDMatrices.D0Term(tree, pointCloud);
         D_1 = SSDMatrices.D1Term(tree, pointCloud);
+        R = SSDMatrices.RTerm(tree);
 	}
 
     @Test
@@ -86,5 +87,28 @@ public class SSDMatricesTest {
 			assertEquals(b, result.get(i*3+1), 0.001f);
 			assertEquals(c, result.get(i*3+2), 0.001f);
 		}
+    }
+    
+    @Test
+    public void RtimesLinearFunctionShouldBeZero(){
+    	ArrayList<Float> f = new ArrayList<Float>();
+    	float a = 7, b = 3, c = 1;
+    	
+    	// D1 has n columns if n is the number of tree vertices
+    	// ==> f will have n rows.
+    	for (MarchableCube treeVertex : tree.getVertices()){
+    		Point3f pos = treeVertex.getPosition();
+    		float linFunc = a*pos.x + b*pos.y + c*pos.z;
+    		f.add(linFunc);
+    	}
+    	
+    	ArrayList<Float> result = new ArrayList<Float>();
+		R.mult(f, result);
+		for (int i = 0; i < result.size()/3; i++ ){
+			assertEquals(0, result.get(i*3), 0.001f);
+			assertEquals(0, result.get(i*3+1), 0.001f);
+			assertEquals(0, result.get(i*3+2), 0.001f);
+		}
+    	
     }
 }

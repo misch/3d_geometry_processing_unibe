@@ -135,10 +135,58 @@ public class SSDMatrices {
 	
 	
 	public static CSRMatrix RTerm(HashOctree tree){
+		CSRMatrix result = new CSRMatrix(0, tree.numberofVertices());
+		float totalScale = 0;
 		
-		//TODO
+		for (HashOctreeVertex vertex : tree.getVertices()){
+			for (int mask = 0b100; mask > 0; mask>>=1){
+				HashOctreeVertex positiveNeigh = tree.getNbr_v2v(vertex, mask);
+				HashOctreeVertex negativeNeigh = tree.getNbr_v2vMinus(vertex, mask);
+				
+				// if no neighbor vertex triple, go to the next direction
+				if (positiveNeigh == null || negativeNeigh == null){
+					continue;
+				}
+				
+				result.addRow();
+				ArrayList<col_val> row =  result.lastRow();
+				
+				// add the values to the row (slide 24 of Peter's explanations)
+				//
+				// [ ... 1 ... -dist_ij/(dist_ij+dist_kj) ... -(dist_jk)/(dist_ij+dist_kj) ]
+				//       ^					^								^
+				//	   col j			  col k							  col i
+				//
+				// j = vertex
+				// k = positiveNeigh
+				// i = negativeNeigh
+				row.add(new col_val(vertex.getIndex(),1));
+				
+				float dist_ij = negativeNeigh.getPosition().distance(vertex.getPosition());
+				float dist_kj = positiveNeigh.getPosition().distance(vertex.getPosition());
+				
+				row.add(new col_val(positiveNeigh.getIndex(),-dist_ij/(dist_ij + dist_kj)));
+				row.add(new col_val(negativeNeigh.getIndex(),-dist_kj/(dist_ij + dist_kj)));
+				
+				totalScale += dist_ij * dist_kj;	
+			}
+
+//			int xMask = 0b100, yMask = 0b010, zMask = 0b001;
+//			
+//			HashOctreeVertex positiveNeighX = tree.getNbr_v2v(vertex, xMask);
+//			HashOctreeVertex negativeNeighX = tree.getNbr_v2vMinus(vertex, xMask);
+//			
+//			HashOctreeVertex positiveNeighY = tree.getNbr_v2v(vertex, yMask);
+//			HashOctreeVertex negativeNeighY = tree.getNbr_v2vMinus(vertex, yMask);
+//			
+//			HashOctreeVertex positiveNeighZ = tree.getNbr_v2v(vertex, zMask);
+//			HashOctreeVertex negativeNeighZ = tree.getNbr_v2vMinus(vertex, zMask);
+			
+			
+		}
 		
-		return null;
+		result.scale(1/totalScale);
+		return result;
 	}
 
 	
