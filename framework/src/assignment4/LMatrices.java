@@ -25,7 +25,21 @@ public class LMatrices {
 	 * @return
 	 */
 	public static CSRMatrix uniformLaplacian(HalfEdgeStructure hs){
-		return null;
+		CSRMatrix laplace = new CSRMatrix(0,hs.getVertices().size());
+		
+		for(Vertex vert : hs.getVertices()){
+			int valence = vert.getValence();
+			
+			laplace.addRow();
+			laplace.lastRow().add(new col_val(vert.index,-1));
+			
+			Iterator<Vertex> iter = vert.iteratorVV();
+			while(iter.hasNext()){
+				laplace.lastRow().add(new col_val(iter.next().index,1.f/valence));
+			}
+			
+		}
+		return laplace;
 	}
 	
 	/**

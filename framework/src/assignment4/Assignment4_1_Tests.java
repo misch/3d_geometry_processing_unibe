@@ -1,12 +1,19 @@
 package assignment4;
 
 
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
+
+import java.util.ArrayList;
+
 import meshes.HalfEdgeStructure;
 import meshes.WireframeMesh;
 import meshes.reader.ObjReader;
 
 import org.junit.Before;
+import org.junit.Test;
+
+import sparse.CSRMatrix;
+import sparse.CSRMatrix.col_val;
 
 public class Assignment4_1_Tests {
 	
@@ -34,6 +41,16 @@ public class Assignment4_1_Tests {
 	}
 	
 	
-	//Test everything and anything...
-
+	@Test 
+	public void uniformLaplacianRowShouldSumUpToZero(){
+		CSRMatrix uniformLaplacian = LMatrices.uniformLaplacian(hs);
+		
+		for (ArrayList<col_val> row : uniformLaplacian.rows){
+			float sum = 0;
+			for (col_val weight : row){
+				sum += weight.val;
+			}
+			assertEquals(0, sum, 0.00001);
+		}
+	}
 }
