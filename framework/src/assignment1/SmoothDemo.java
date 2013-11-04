@@ -37,12 +37,12 @@ public class SmoothDemo {
 		
 		// smoothing:	always just 1 because the values of the vertex position
 		// 				get overwritten during the smoothing
-		glSmoothed1.smooth(1);
-		glSmoothed2.smooth(1);
-		glSmoothed3.smooth(1);
-		glSmoothed4.smooth(1);
-		glSmoothed5.smooth(1);
-		glSmoothed40.smooth(35);
+//		glSmoothed1.smooth(1);
+//		glSmoothed2.smooth(1);
+//		glSmoothed3.smooth(1);
+//		glSmoothed4.smooth(1);
+//		glSmoothed5.smooth(1);
+//		glSmoothed40.smooth(35);
 		
 		
 		// shaders

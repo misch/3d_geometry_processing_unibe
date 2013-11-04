@@ -1,199 +1,154 @@
 package glWrapper;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.media.opengl.GL;
-import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
 
-import meshes.Face;
-import meshes.HEData3d;
-import meshes.HalfEdgeStructure;
-import meshes.Vertex;
 import openGL.gl.GLDisplayable;
 import openGL.gl.GLRenderer;
 import openGL.objects.Transformation;
 
-/**
- * This class describes how OpenGL should interprete a half-edge data structure.
- * @author Michèle Wyss
- *
- */
+import meshes.Face;
+import meshes.HEData;
+import meshes.HEData1d;
+import meshes.HEData3d;
+import meshes.HalfEdgeStructure;
+import meshes.Vertex;
+
+
 public class GLHalfEdgeStructure extends GLDisplayable {
 
-	HalfEdgeStructure myMesh;
-	public GLHalfEdgeStructure(HalfEdgeStructure m) {
+	private HalfEdgeStructure myHE;
+	HashMap<Object,RenderConfig> glNames;
+	
+	public GLHalfEdgeStructure(HalfEdgeStructure e) {
+		super(e.getVertices().size());
+		myHE = e;
 		
-		super(m.getVertices().size());
-		myMesh = m;
+		glNames = new HashMap<Object,RenderConfig>();
 		
-		sendToOpenGL();
+		//add vertices
+		float[] verts = new float[myHE.getVertices().size() *3];
+		int[] ind = new int[myHE.getFaces().size()*3];
 		
+		copyToArray(myHE.getVertices(), verts);
+		copyToArray(myHE.getFaces(), ind);
+		this.addElement(verts, Semantic.POSITION , 3);
+		this.addIndices(ind);
 	}
 
-	public void sendToOpenGL(){
-		//Add Vertices
-				float[] verts = new float[myMesh.getVertices().size()*3];
-				float[] valences = new float[myMesh.getVertices().size()];
-				float[] curvatures = new float[myMesh.getVertices().size()];
-				float[] normals = new float[myMesh.getVertices().size()*3];
-				int[] ind = new int[myMesh.getFaces().size()*3];
-				
-				//copy the data to the allocated arrays
-				
-				copyToArrayP3f(myMesh.getVertices(), verts);
-				copyToArrayValence(myMesh.getVertices(), valences);
-				copyToArrayCurvature(myMesh.getVertices(), curvatures);
-				copyToArrayNormals(myMesh.getVertices(), normals);
-				copyToArray(myMesh.getFaces(), ind); 
-				
-					
-				
-				//The class GLVertexData provides the methods addElement(...) which will
-				//cause the passed array to be sent to the graphics card
-				//The array passed with the semantic POSITION will always be associated
-				//to the position variable in the GL shaders, while arrays passed with the
-				//USERSPECIFIED semantic will be associated to the name passed in the last argument
-				//
-				this.addElement(verts, Semantic.POSITION , 3);
-				//Here the position coordinates are passed a second time to the shader as color
-				this.addElement(verts, Semantic.USERSPECIFIED , 3, "color");
-				
-				this.addElement(valences, Semantic.USERSPECIFIED, 1, "valence");
-				this.addElement(curvatures, Semantic.USERSPECIFIED, 1, "curvature");
-				
-				this.addElement(normals, Semantic.USERSPECIFIED, 3, "normal");
-				
-				//pass the index array which has to be conformal to the glRenderflag returned, here GL_Triangles
-				this.addIndices(ind);
-	}
+
+	
 	/**
-	 * Helper method that copies the valence information to the valences array
-	 * @param vertices
-	 * @param valences
+	 * For user specified objects, the specified object will tied to the shader attribute name.
+	 * @param objectToRender
+	 * @param s
+	 * @param name
 	 */
-	private void copyToArrayValence(ArrayList<Vertex> vertices, float[] valences) {
-		int i = 0;
-		for(Vertex v: vertices){
-			valences[i++] = v.getValence();
-		}
+	public void add(HEData1d oneDData, String name) {
+		RenderConfig c = new RenderConfig();
+		c.s = Semantic.USERSPECIFIED;
+		c.name = name;
+		glNames.put(oneDData, c);
+		this.sendElement(oneDData);
 	}
 	
 	/**
-	 * Helper method that copies the curvature information to the curvatures array
-	 * @param vertices
-	 * @param curvatures
+	 * For user specified objects, the specified object will tied to the shader attribute name.
+	 * @param objectToRender
+	 * @param s
+	 * @param name
 	 */
-	private void copyToArrayCurvature(ArrayList<Vertex> vertices, float[] curvatures) {
-		int i = 0;
-		for(Vertex v: vertices){
-			curvatures[i++] = v.getCurvature();
+	public void add(HEData3d threeDData, String name) {
+		RenderConfig c = new RenderConfig();
+		c.s = Semantic.USERSPECIFIED;
+		c.name = name;
+		glNames.put(threeDData, c);
+		this.sendElement(threeDData);
+	}
+	
+	
+
+	private void sendElement(HEData1d d) {
+		float[] vals = new float[d.size()];
+		int i=0;
+		for(Number n: d){
+			vals[i++] = n.floatValue();
+		}
+		
+		RenderConfig c = glNames.get(d);
+		if( c!= null)
+				this.addElement(vals, Semantic.USERSPECIFIED, 1, c.name);
+		else{
+			System.out.println("not configured what to map : " + d 
+					+ " to, use configureGLSL and createAllConfiguredBuffers");
 		}
 	}
 	
-	/**
-	 * Helper method that copies the valence information to the valences array
-	 * @param vertices
-	 * @param normals
-	 */
-	private void copyToArrayNormals(ArrayList<Vertex> vertices, float[] normals) {
-		int i = 0;
-		for(Vertex v: vertices){
-			normals[i++] = v.getNormal().x;
-			normals[i++] = v.getNormal().y;
-			normals[i++] = v.getNormal().z;
+	private void sendElement(HEData3d d) {
+		float[] vals = new float[d.size()*3];
+		int i=0;
+		for(Tuple3f v : d){
+			vals[i++] = v.x;
+			vals[i++] = v.y;
+			vals[i++] = v.z;
+		}
+		
+		RenderConfig c = glNames.get(d);
+		if( c!= null)
+				this.addElement(vals, Semantic.USERSPECIFIED, 3, c.name);
+		else{
+			System.out.println("not configured what to map : " + d 
+					+ " to, use configureGLSL and createAllConfiguredBuffers");
 		}
 	}
 
-	/**
-	 * Helper method that copies the face information to the ind array
-	 * @param faces
-	 * @param ind
-	 */
 	private void copyToArray(ArrayList<Face> faces, int[] ind) {
-		int i = 0, j;
-		for(Face f : faces){
-			Iterator<Vertex> vertexIterator = f.iteratorFV();
-			while (vertexIterator.hasNext()){
-				for(j=0; j < 3; j++){
-					ind[i*3 + j] = vertexIterator.next().index;
-				}
+		Iterator<Vertex> it;
+		int i=0;
+		for(Face f: faces){
+			it = f.iteratorFV();
+			while(it.hasNext()){
+				ind[i++] = it.next().index;
 			}
-			
-			i++;
-		}
-	}
-	
-	/**
-	 * Helper method that copies the vertices arraylist to the verts array
-	 * @param vertices
-	 * @param verts
-	 */
-	private void copyToArrayP3f(ArrayList<Vertex> vertices, float[] verts) {
-		int i = 0;
-		for(Vertex v: vertices){
-			verts[i++] = v.getPos().x;
-			verts[i++] = v.getPos().y;
-			verts[i++] = v.getPos().z;
 		}
 	}
 
+	private void copyToArray(ArrayList<Vertex> vertices, float[] verts) {
+		int i = 0;
+		for(Vertex v: vertices){
+			v.index = i/3;
+			verts[i++]= v.getPos().x;
+			verts[i++]= v.getPos().y;
+			verts[i++]= v.getPos().z;
+			
+		}
+	}
+
+
 	
-	/**
-	 * Return the gl render flag to inform openGL that the indices/positions describe
-	 * triangles
-	 */
+
+	private class RenderConfig{
+		Semantic s;
+		String name;
+	}
+
+
+
 	@Override
 	public int glRenderFlag() {
 		return GL.GL_TRIANGLES;
 	}
 
 
-	/**
-	 * No additional uniform variables are passed to the shader.
-	 */
 	@Override
 	public void loadAdditionalUniforms(GLRenderer glRenderContext,
 			Transformation mvMat) {
-		
-		//additional uniforms can be loaded using the function
-		//glRenderContext.setUniform(name, val);
-		
-		//Such uniforms can be accessed in the shader by declaring them as
-		// uniform <type> name;
-		//where type is the appropriate type, e.g. float / vec3 / mat4 etc.
-		//this method is called at every rendering pass.
+		// no additional uniforms		
 	}
-	
-	public void smooth(int iterations){
-		ArrayList<Vertex> vertices = myMesh.getVertices();
-		HEData3d smoothedVerts = new HEData3d(myMesh);
-		
-		for (int i = 0; i<iterations; i++){
-			for (Vertex v: vertices){
-				Iterator<Vertex> iter = v.iteratorVV();
-	
-				Point3f sum = new Point3f(0, 0, 0);
-				int numberOfVertices = 0;
-				
-				while (iter.hasNext()){
-					sum.add(iter.next().getPos());
-					numberOfVertices++;
-				}
-				
-				sum.scale(1.f/(float)(numberOfVertices));
-				smoothedVerts.put(v, sum);
-			}	
-			// This will overwrite the actual HalfEdgeStructure.
-			// Maybe I'll stop ignoring that being funky later.
-			// Because. Funky. Is. Okay. Too.
-			for (Vertex v : myMesh.getVertices()){
-				Tuple3f smoothed = smoothedVerts.get(v);
-				v.setPos(smoothed.x,smoothed.y,smoothed.z);
-			}
-		}
-		sendToOpenGL();
-	}
+
 
 }

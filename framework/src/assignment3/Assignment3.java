@@ -79,8 +79,8 @@ public class Assignment3 {
 		
 		GLHalfEdgeStructure glSmoothedMarchingCubes = new GLHalfEdgeStructure(smoothedMarchingCube);
 		GLHalfEdgeStructure glSmoothedDualMarchingCubes = new GLHalfEdgeStructure(smoothedDualMarchingCube);
-		glSmoothedMarchingCubes.smooth(1);
-		glSmoothedDualMarchingCubes.smooth(1);
+//		glSmoothedMarchingCubes.smooth(1);
+//		glSmoothedDualMarchingCubes.smooth(1);
 		glSmoothedMarchingCubes.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
 		glSmoothedDualMarchingCubes.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
 		d.addToDisplay(glSmoothedMarchingCubes);
