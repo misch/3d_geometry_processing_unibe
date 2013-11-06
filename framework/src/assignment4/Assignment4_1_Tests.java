@@ -1,9 +1,12 @@
 package assignment4;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+
+import javax.vecmath.Vector3f;
 
 import meshes.HalfEdgeStructure;
 import meshes.WireframeMesh;
@@ -66,4 +69,16 @@ public class Assignment4_1_Tests {
 			assertEquals(0, sum, 0.00001);
 		}
 	}
+	
+    @Test
+    public void sphereMeanCurvatureMixedCotanLaplacian() {
+            CSRMatrix laplacian = LMatrices.mixedCotanLaplacian(hs);
+            // Call it "res" because thats the very beautiful name of this
+            // variable in he LMatrices.mult method. Is this a short version of "result?"
+            // Cow, oh holy one...!
+            ArrayList<Vector3f> res = new ArrayList<Vector3f>();
+            LMatrices.mult(laplacian, hs, res);
+            for (Vector3f meanCurvNormal: res)
+                    assertEquals(0.5f, meanCurvNormal.length()/2, 0.01);
+    }
 }
