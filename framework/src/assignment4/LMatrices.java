@@ -67,7 +67,7 @@ public class LMatrices {
 					laplace.lastRow().add(new col_val(edge.start().index,weight));
 				}
 			}
-			laplace.lastRow().add(new col_val(vert.index,sum));
+			laplace.lastRow().add(new col_val(vert.index,-sum));
 		}
 		return laplace;
 	}
