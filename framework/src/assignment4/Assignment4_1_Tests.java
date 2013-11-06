@@ -53,4 +53,17 @@ public class Assignment4_1_Tests {
 			assertEquals(0, sum, 0.00001);
 		}
 	}
+	
+	@Test
+	public void mixedCotanLaplacianRowShouldSumUpToZero(){
+		CSRMatrix uniformLaplacian = LMatrices.mixedCotanLaplacian(hs);
+		
+		for (ArrayList<col_val> row : uniformLaplacian.rows){
+			float sum = 0;
+			for (col_val weight : row){
+				sum += weight.val;
+			}
+			assertEquals(0, sum, 0.00001);
+		}
+	}
 }

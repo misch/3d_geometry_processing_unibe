@@ -48,7 +48,32 @@ public class LMatrices {
 	 * @return
 	 */
 	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs){
-		return null;
+		CSRMatrix laplace = new CSRMatrix(0,hs.getVertices().size());
+		
+		for(Vertex vert : hs.getVertices()){
+			Iterator<HalfEdge> iter = vert.iteratorVE();
+			laplace.addRow();
+			
+			float sum = 0;
+			while(iter.hasNext()){
+				HalfEdge edge = iter.next();
+				
+				if(edge.hasFace() && edge.getOpposite().hasFace()){
+					float alpha = edge.getOppositeAngle();
+					float beta = edge.getOpposite().getOppositeAngle();
+					Vector3f v = edge.toVec();
+					float weight = (cot(alpha) + cot(beta))/ (2*vert.getMixedArea()); 
+					sum += weight;
+					laplace.lastRow().add(new col_val(edge.start().index,weight));
+				}
+			}
+			laplace.lastRow().add(new col_val(vert.index,sum));
+		}
+		return laplace;
+	}
+		
+	private static float cot(float angle){
+		return 1.f/(float)(Math.tan(angle));
 	}
 	
 	/**
