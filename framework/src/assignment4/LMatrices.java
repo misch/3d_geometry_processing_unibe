@@ -38,7 +38,7 @@ public class LMatrices {
 			while(iter.hasNext()){
 				laplace.lastRow().add(new col_val(iter.next().index,1.f/valence));
 			}
-			
+			Collections.sort(laplace.lastRow());
 		}
 		return laplace;
 	}
@@ -69,7 +69,9 @@ public class LMatrices {
 				}
 			}
 			laplace.lastRow().add(new col_val(vert.index,-sum));
+			Collections.sort(laplace.lastRow());
 		}
+		
 		return laplace;
 	}
 		
@@ -93,7 +95,7 @@ public class LMatrices {
 	 * @param s
 	 * @param res
 	 */
-	public static void mult(CSRMatrix m, HalfEdgeStructure s, ArrayList<Tuple3f> res){
+	public static void mult(CSRMatrix m, HalfEdgeStructure s, ArrayList<Vector3f> res){
 		ArrayList<Float> x = new ArrayList<>(), b = new ArrayList<>(s.getVertices().size());
 		x.ensureCapacity(s.getVertices().size());
 		

@@ -21,34 +21,30 @@ import sparse.CSRMatrix;
 public class LaplacianDemo {
 	
 	public static void main(String[] args) throws IOException, MeshNotOrientedException, DanglingTriangleException{
-		WireframeMesh m = ObjReader.read("objs/dragon.obj", false);
-		HalfEdgeStructure hs1 = new HalfEdgeStructure();
-		hs1.init(m);
-		
-		m = ObjReader.read("objs/sphere.obj", true);
-		HalfEdgeStructure hs2 = new HalfEdgeStructure();
-		hs2.init(m);
-		HalfEdgeStructure[] hsArray = new HalfEdgeStructure[]{hs1, hs2};
+
+
+		WireframeMesh m = ObjReader.read("objs/uglySphere.obj", true);
+		HalfEdgeStructure hs = new HalfEdgeStructure();
+		hs.init(m);
+
 		MyDisplay d = new MyDisplay();
 		
-		for (HalfEdgeStructure hs: hsArray) {
-			CSRMatrix mMixed = LMatrices.mixedCotanLaplacian(hs);
-			CSRMatrix mUniform = LMatrices.uniformLaplacian(hs);
-			CSRMatrix[] laplacians = new CSRMatrix[]{ mUniform, mMixed };
+			CSRMatrix cotanLaplacian = LMatrices.mixedCotanLaplacian(hs);
+			CSRMatrix uniformLaplacian = LMatrices.uniformLaplacian(hs);
+			CSRMatrix[] laplacians = new CSRMatrix[]{ uniformLaplacian, cotanLaplacian };
 			for (CSRMatrix laplacian: laplacians) {
-				ArrayList<Tuple3f> curvatures = new ArrayList<Tuple3f>();
+				ArrayList<Vector3f> curvatures = new ArrayList<Vector3f>();
 				LMatrices.mult(laplacian, hs, curvatures);
 				
 				GLHalfEdgeStructure glHs = new GLHalfEdgeStructure(hs);
 				glHs.add(curvatures, "curvature");
-				//And show off...
 				
 				glHs.configurePreferredShader("shaders/curvature_arrows.vert",
 						"shaders/curvature_arrows.frag", 
 						"shaders/curvature_arrows.geom");
 				d.addToDisplay(glHs);
 			}
-			//And show off...
+
 			GLHalfEdgeStructure glMesh = new GLHalfEdgeStructure(hs);
 			glMesh.configurePreferredShader("shaders/trimesh_flat.vert",
 					"shaders/trimesh_flat.frag", 
@@ -56,4 +52,4 @@ public class LaplacianDemo {
 			d.addToDisplay(glMesh);
 		}
 	}
-}
+

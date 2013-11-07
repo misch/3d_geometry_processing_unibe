@@ -6,17 +6,16 @@ import java.util.Iterator;
 
 import javax.media.opengl.GL;
 import javax.vecmath.Tuple3f;
-
-import openGL.gl.GLDisplayable;
-import openGL.gl.GLRenderer;
-import openGL.objects.Transformation;
+import javax.vecmath.Vector3f;
 
 import meshes.Face;
-import meshes.HEData;
 import meshes.HEData1d;
 import meshes.HEData3d;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
+import openGL.gl.GLDisplayable;
+import openGL.gl.GLRenderer;
+import openGL.objects.Transformation;
 
 
 public class GLHalfEdgeStructure extends GLDisplayable {
@@ -55,6 +54,20 @@ public class GLHalfEdgeStructure extends GLDisplayable {
 		glNames.put(oneDData, c);
 		this.sendElement(oneDData);
 	}
+	
+	public void add(ArrayList<Vector3f> data, String name) {
+
+		float[] dataArray = new float[data.size() * 3];
+		for (int idx = 0; idx < data.size(); idx++) {
+			Tuple3f t = data.get(idx);
+			dataArray[idx * 3] = t.x;
+			dataArray[idx * 3 + 1] = t.y;
+			dataArray[idx * 3 + 2] = t.z;
+		}
+
+		this.addElement(dataArray, Semantic.USERSPECIFIED, 3, name);
+	}
+
 	
 	/**
 	 * For user specified objects, the specified object will tied to the shader attribute name.

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 
 import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
 import meshes.exception.DanglingTriangleException;
@@ -221,5 +219,20 @@ public class HalfEdgeStructure {
 		for(Vertex v: vertices){
 			v.index= idx++;
 		}
+	}
+	
+	public float getVolume(){
+		
+		float sum = 0;
+		for (Face face : this.getFaces()){
+			Iterator<Vertex> iter = face.iteratorFV();
+			
+			Vector3f crossProd = new Vector3f();
+			
+			crossProd.cross(new Vector3f(iter.next().getPos()),new Vector3f(iter.next().getPos()));
+			
+			sum += crossProd.dot(new Vector3f(iter.next().getPos()));	
+		}
+		return sum;
 	}
 }
