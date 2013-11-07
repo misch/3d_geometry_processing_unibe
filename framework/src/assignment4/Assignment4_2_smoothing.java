@@ -24,7 +24,7 @@ public class Assignment4_2_smoothing {
 	
 	public static void main(String args[]) throws IOException, MeshNotOrientedException, DanglingTriangleException{
 	
-		WireframeMesh m = ObjReader.read("objs/bunny5k.obj", false);
+		WireframeMesh m = ObjReader.read("objs/head.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		hs.init(m);
 		
@@ -32,9 +32,10 @@ public class Assignment4_2_smoothing {
 		
 		float vol_old = hs.getVolume();
 		
-		ImplicitSmoother.smooth(hs, 0.01f, laplacian);
+		ImplicitSmoother.smooth(hs, 0.05f, laplacian);
 		
 		float vol_new = hs.getVolume();
+		System.out.println(vol_old/vol_new);
 		
 		MyDisplay disp = new MyDisplay();
 

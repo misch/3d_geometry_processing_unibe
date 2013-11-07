@@ -160,10 +160,12 @@ public class Face extends HEElement {
 		float area = 0;
 		if (!isObtuse()){
 			HalfEdge PQ = getOutgoing(p);
-			HalfEdge PR = getIncoming(p).getOpposite();
+			HalfEdge PR = getIncoming(p)/*.getOpposite()*/;
 			float angleQ = PR.getOppositeAngle();
 			float angleR = PQ.getOppositeAngle();
-			
+						
+			angleQ = (angleQ>1e-2? angleQ : 1e-2f);
+			angleR = (angleQ>1e-2? angleR : 1e-2f);
 			area = (1/8.f)*(PR.lengthSquared() * cot(angleQ) + PQ.lengthSquared()* cot(angleR));
 		}
 		else{

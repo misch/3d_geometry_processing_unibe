@@ -135,6 +135,7 @@ public class CSRMatrix {
 		assert(B.nCols == A.nCols && B.nRows == A.nRows);
 		
 		this.nCols = A.nCols;
+		this.nRows = 0;
 		this.rows.clear();
 		int idx1, idx2;
 		ArrayList<col_val> row1, row2, rowRes;

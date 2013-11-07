@@ -1,28 +1,38 @@
 package assignment4;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-import meshes.Face;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 import sparse.CSRMatrix;
+import sparse.CSRMatrix.col_val;
 import sparse.LinearSystem;
+import sparse.solver.JMTSolver;
 import sparse.solver.SciPySolver;
 import sparse.solver.Solver;
-import assignment3.SSDMatrices;
 
 public class ImplicitSmoother {
 
 	public static void smooth(HalfEdgeStructure hs, float lambda, CSRMatrix laplacian){
-		CSRMatrix identity = SSDMatrices.eye(hs.getVertices().size(), hs.getVertices().size());
+//		CSRMatrix identity = SSDMatrices.eye(hs.getVertices().size(), hs.getVertices().size());
 		
 		
 		laplacian.scale(-lambda);
 		
-		CSRMatrix result = new CSRMatrix(0, 0);
 		
-		result.add(laplacian, identity);
+		for (int i = 0; i < laplacian.nRows; i++) {
+		    boolean hadEntry = false;
+		    for (col_val entry : laplacian.rows.get(i))
+		        if (entry.col == i) {
+		            entry.val += 1;
+		            hadEntry = true;
+		        }
+
+		    if (!hadEntry)
+		        laplacian.rows.get(i).add(new col_val(i, 1));
+		} 
+		
+		
 		
 		LinearSystem system = new LinearSystem();
 		
@@ -36,13 +46,14 @@ public class ImplicitSmoother {
 			zCoord.add(vert.getPos().z);
 		}
 		system.b = xCoord;
-		system.mat = result;
+		system.mat = laplacian;
 		
 		ArrayList<Float> solvedX = new ArrayList<Float>(); 
 		ArrayList<Float> solvedY = new ArrayList<Float>();
 		ArrayList<Float> solvedZ = new ArrayList<Float>();
 		
-		Solver solver = new SciPySolver("");
+//		Solver solver = new SciPySolver("");
+		Solver solver = new JMTSolver();
 		solver.solve(system, solvedX);
 		
 		system.b = yCoord;

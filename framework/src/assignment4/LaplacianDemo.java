@@ -23,7 +23,7 @@ public class LaplacianDemo {
 	public static void main(String[] args) throws IOException, MeshNotOrientedException, DanglingTriangleException{
 
 
-		WireframeMesh m = ObjReader.read("objs/uglySphere.obj", true);
+		WireframeMesh m = ObjReader.read("objs/bunny5k.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		hs.init(m);
 

@@ -68,9 +68,10 @@ public class JMTSolver extends Solver{
 			System.err.println("Iterative Solver did not converge");
 		}
 		
+		x.clear();
 		//copy the result back
 		for(int i = 0; i < x_.size(); i++){
-			x.set(i, (float) x_.get(i));
+			x.add( (float) x_.get(i));
 		}
 	}
 

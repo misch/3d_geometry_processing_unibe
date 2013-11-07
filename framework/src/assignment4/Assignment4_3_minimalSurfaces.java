@@ -99,7 +99,7 @@ public class Assignment4_3_minimalSurfaces {
 		return has_jm1_dist;
 	}
 
-	private static boolean isOnBoundary(Vertex v) {
+	public static boolean isOnBoundary(Vertex v) {
 		Iterator<HalfEdge> it = v.iteratorVE();
 		while(it.hasNext()){
 			if(it.next().isOnBorder()){

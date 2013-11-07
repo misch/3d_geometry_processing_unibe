@@ -55,19 +55,24 @@ public class LMatrices {
 			Iterator<HalfEdge> iter = vert.iteratorVE();
 			laplace.addRow();
 			
+			if(Assignment4_3_minimalSurfaces.isOnBoundary(vert)){
+				continue;
+			}
+			float area = vert.getMixedArea();
 			float sum = 0;
 			while(iter.hasNext()){
 				HalfEdge edge = iter.next();
 				
-				if(edge.hasFace() && edge.getOpposite().hasFace()){
-					float alpha = edge.getOppositeAngle();
-					float beta = edge.getOpposite().getOppositeAngle();
+					float alpha = Math.max(edge.getOppositeAngle(),1e-2f);
+					float beta = Math.max(edge.getOpposite().getOppositeAngle(),1e-2f);
 					Vector3f v = edge.toVec();
-					float weight = (cot(alpha) + cot(beta))/ (2*vert.getMixedArea()); 
+					
+					float weight = (cot(alpha) + cot(beta))/ (2*area); 
+//					weight = Math.max(Math.min(weight,10),-1
 					sum += weight;
 					laplace.lastRow().add(new col_val(edge.start().index,weight));
-				}
 			}
+			
 			laplace.lastRow().add(new col_val(vert.index,-sum));
 			Collections.sort(laplace.lastRow());
 		}

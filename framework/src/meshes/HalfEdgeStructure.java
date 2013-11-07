@@ -231,8 +231,8 @@ public class HalfEdgeStructure {
 			
 			crossProd.cross(new Vector3f(iter.next().getPos()),new Vector3f(iter.next().getPos()));
 			
-			sum += crossProd.dot(new Vector3f(iter.next().getPos()));	
+			sum += Math.abs(crossProd.dot(new Vector3f(iter.next().getPos())));	
 		}
-		return sum;
+		return sum/6;
 	}
 }

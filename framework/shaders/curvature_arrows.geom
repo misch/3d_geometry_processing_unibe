@@ -17,7 +17,7 @@ void main()
 	curvature_f = curvature_g[0];
 	gl_Position = projection*modelview*position_g[0];
 	EmitVertex();
-	vec3 dir = normalize(curvature_g[0])*0.1;
+	vec3 dir = normalize(curvature_g[0])*0.1*log(1+length(curvature_g[0]));
 	gl_Position = projection*modelview*(position_g[0] - vec4(dir, 0));
 	EmitVertex();
 }
