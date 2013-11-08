@@ -13,3 +13,7 @@ This repository contains the exercise stuff of the 3D Geometry Processing lectur
 ##surface reconstruction - this should be a sphere... O.o
 ![Sphere - Surface reconstruction](/screenshots/sphere1.png)
 ![Sphere - Surface reconstruction](/screenshots/sphere2.png)
+
+##Implicit Smoothing - fail.
+![Face - Implicit Smoothing](/screenshots/smoothedFace1.png)
+![Face - Implicit Smoothing](/screenshots/smoothedFace2.png)
