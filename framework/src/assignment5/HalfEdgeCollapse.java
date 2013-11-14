@@ -101,6 +101,7 @@ public class HalfEdgeCollapse {
 		//around e.end() before the collapse is finished.
 		makeV2ERefSafe(e);
 		
+		deadVertices.add(e.start());
 		
 		// Assign new end-vertex to the incident edges at the 
 		// soon deleted vertex
@@ -138,11 +139,19 @@ public class HalfEdgeCollapse {
 		HalfEdge endIn = edge.getNext().getOpposite();
 		endIn.setOpposite(startOut);
 		startOut.setOpposite(endIn);
+		
+		Face deadFace = edge.getFace();
+		deadFaces.add(deadFace);
+		Iterator<HalfEdge> iter = deadFace.iteratorFE();
+		while(iter.hasNext()){
+			deadEdges.add(iter.next());
+		}
 	}
 	
 	private void relinkBoundary(HalfEdge edge){
 		edge.getNext().setPrev(edge.getPrev());
 		edge.getPrev().setNext(edge.getNext());
+		deadEdges.add(edge);
 	}
 	
 
