@@ -1,5 +1,6 @@
 package assignment5;
 
+import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLWireframeMesh;
 
 import java.util.ArrayList;
@@ -29,6 +30,11 @@ public class Assignment5_vis {
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		hs.init(wf);
 		
+		GLHalfEdgeStructure glHs = new GLHalfEdgeStructure(hs);
+		glHs.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
+		
+		MyDisplay d = new MyDisplay();
+		d.addToDisplay(glHs);
 		
 		//visualize the isosurfaces of this bunny_ear	
 		//to compute the eigenvalues of some 3x3 matrix m:
