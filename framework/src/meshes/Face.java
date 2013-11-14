@@ -222,8 +222,11 @@ public class Face extends HEElement {
 	}
 
 	public Vector3f normal() {
-		// TODO Auto-generated method stub
-		return null;
+		Vector3f normal = new Vector3f();
+		Iterator<HalfEdge> iter = iteratorFE();
+		normal.cross(iter.next().toVec(), iter.next().toVec());
+		normal.normalize();
+		
+		return normal;
 	}
-
 }

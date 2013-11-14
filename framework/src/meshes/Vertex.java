@@ -256,7 +256,14 @@ public class Vertex extends HEElement{
 	}
 
 	public boolean isOnBoundary() {
-		// TODO Auto-generated method stub
+		Iterator<HalfEdge> iter = iteratorVE();
+		
+		while (iter.hasNext()){
+			if(iter.next().isOnBorder()){
+				return true;
+			}
+		}
 		return false;
+		
 	}
 }
