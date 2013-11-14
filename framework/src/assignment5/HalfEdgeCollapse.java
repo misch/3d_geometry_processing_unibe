@@ -111,28 +111,20 @@ public class HalfEdgeCollapse {
 		}
 		
 		
+		// relink edges
 		if (e.hasFace()){
-			HalfEdge startOut = e.getPrev().getOpposite();
-			HalfEdge endOut = e.getNext().getOpposite();
-			endOut.setOpposite(startOut);
+			relink(e);
 		}
 		else{
-			//TODO Boundary case
+			relinkBoundary(e);
 		}
 		
 		if (e.getOpposite().hasFace()){
-			HalfEdge oppositeStartOut = e.getOpposite().getPrev().getOpposite();
-			HalfEdge oppositeEndOut = e.getOpposite().getNext().getOpposite();
-			oppositeStartOut.setOpposite(oppositeEndOut);
+			relink(e.getOpposite());
 		}
 		else{
-			//TODO: Boundary case
+			relinkBoundary(e.getOpposite());
 		}
-		
-		
-		//your code goes here....
-		
-		
 		
 		//Do a lot of assertions while debugging, either here
 		//or in the calling method... ;-)
@@ -141,6 +133,17 @@ public class HalfEdgeCollapse {
 
 	}
 	
+	private void relink(HalfEdge edge){
+		HalfEdge startOut = edge.getPrev().getOpposite();
+		HalfEdge endOut = edge.getNext().getOpposite();
+		endOut.setOpposite(startOut);
+		startOut.setOpposite(endOut);
+	}
+	
+	private void relinkBoundary(HalfEdge edge){
+		edge.getNext().setPrev(edge.getPrev());
+		edge.getPrev().setNext(edge.getNext());
+	}
 	
 
 	/**
