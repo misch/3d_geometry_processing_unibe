@@ -254,4 +254,9 @@ public class Vertex extends HEElement{
 			throw new UnsupportedOperationException();
 		}
 	}
+
+	public boolean isOnBoundary() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

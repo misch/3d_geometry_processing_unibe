@@ -221,4 +221,9 @@ public class Face extends HEElement {
 		return isObtuse;
 	}
 
+	public Vector3f normal() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
