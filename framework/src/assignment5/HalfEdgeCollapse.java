@@ -135,9 +135,9 @@ public class HalfEdgeCollapse {
 	
 	private void relink(HalfEdge edge){
 		HalfEdge startOut = edge.getPrev().getOpposite();
-		HalfEdge endOut = edge.getNext().getOpposite();
-		endOut.setOpposite(startOut);
-		startOut.setOpposite(endOut);
+		HalfEdge endIn = edge.getNext().getOpposite();
+		endIn.setOpposite(startOut);
+		startOut.setOpposite(endIn);
 	}
 	
 	private void relinkBoundary(HalfEdge edge){
