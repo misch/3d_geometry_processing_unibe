@@ -102,6 +102,34 @@ public class HalfEdgeCollapse {
 		makeV2ERefSafe(e);
 		
 		
+		// Assign new end-vertex to the incident edges at the 
+		// soon deleted vertex
+		Iterator<HalfEdge> iter = e.start().iteratorVE();
+		
+		while(iter.hasNext()){
+			iter.next().setEnd(e.end());
+		}
+		
+		
+		if (e.hasFace()){
+			HalfEdge startOut = e.getPrev().getOpposite();
+			HalfEdge endOut = e.getNext().getOpposite();
+			endOut.setOpposite(startOut);
+		}
+		else{
+			//TODO Boundary case
+		}
+		
+		if (e.getOpposite().hasFace()){
+			HalfEdge oppositeStartOut = e.getOpposite().getPrev().getOpposite();
+			HalfEdge oppositeEndOut = e.getOpposite().getNext().getOpposite();
+			oppositeStartOut.setOpposite(oppositeEndOut);
+		}
+		else{
+			//TODO: Boundary case
+		}
+		
+		
 		//your code goes here....
 		
 		
@@ -112,7 +140,6 @@ public class HalfEdgeCollapse {
 		//to detect what it is that is wrong...
 
 	}
-	
 	
 	
 
