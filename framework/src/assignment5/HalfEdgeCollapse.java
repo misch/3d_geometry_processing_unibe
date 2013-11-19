@@ -195,7 +195,7 @@ public class HalfEdgeCollapse {
 	 */
 	public static boolean isEdgeCollapsable(HalfEdge e){
 		//1-neighborhood(e.start) \cap 1-neighborhood(e.end)
-		System.out.println("In isEdgeCollapsable");
+//		System.out.println("In isEdgeCollapsable");
 		int commonNeighbors = 0;
 		
 		Iterator<Vertex> it_a = e.start().iteratorVV();
@@ -206,7 +206,7 @@ public class HalfEdgeCollapse {
 			it_b = e.end().iteratorVV();
 			while(it_b.hasNext()){
 				nb_b = it_b.next();
-				System.out.println(nb_b.toString());
+//				System.out.println(nb_b.toString());
 				commonNeighbors += (nb_b == nb_a ? 1 : 0);
 			}
 		}
@@ -222,7 +222,7 @@ public class HalfEdgeCollapse {
 		if(!e.getOpposite().hasFace() && e.getOpposite().getNext().getNext() == e.getOpposite().getPrev()){
 			return false;
 		}
-		System.out.println("Done with isEdgeCollapsable");
+//		System.out.println("Done with isEdgeCollapsable");
 		return commonNeighbors == (e.isOnBorder()? 1: 2);
 		
 	}
@@ -339,7 +339,6 @@ public class HalfEdgeCollapse {
 	 * @return
 	 */
 	public boolean isEdgeDead(HalfEdge e){
-		System.out.println("In isEdgeDead");
 		return deadEdges.contains(e);
 	}
 	

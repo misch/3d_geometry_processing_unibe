@@ -22,30 +22,46 @@ public class CollapseSmallEdges {
 
 		hsToKill.init(wf);
 		hsWillLive.init(wf);
-		float epsilon = 1;
+		float epsilon = 0.5f;
 		
-//		HalfEdge deadEdge = hsToKill.getHalfEdges().get(4);
-		//mark the halfedge on untouched object
 		ArrayList<Vector3f> color = new ArrayList<Vector3f>(Collections.nCopies(hsWillLive.getVertices().size(), new Vector3f(0,0,1)));
 		HalfEdgeCollapse collapse = new HalfEdgeCollapse(hsToKill);
 		
+//		for(int i = 0; i<250; i++){
+//		HalfEdge deadEdge = hsToKill.getHalfEdges().get(i);
+//		if(HalfEdgeCollapse.isEdgeCollapsable(deadEdge)){
+//			System.out.println("DONE! " + i);
+//			collapse.collapseEdge(deadEdge);
+//			collapse.finish();
+//		}
+//		}
 		int counter = 0;
-		int checkCounter = 0;
+		int edgeCounter = 0;
 		for(HalfEdge edge: hsToKill.getHalfEdges()){
-			checkCounter++;
-			System.out.print("Checking edge No. " + checkCounter +": ");
-			if( edge.length() > epsilon || !HalfEdgeCollapse.isEdgeCollapsable(edge) || collapse.isEdgeDead(edge)){
-				System.out.print("Stays.\n");
-				continue;
+			edgeCounter++;
+			System.out.println(edgeCounter);
+//			System.out.println(edge.toString());
+			if( edge.toVec().length() > epsilon){
+//					System.out.println("Edge too long.");
+					continue;
+				}
+				if(!HalfEdgeCollapse.isEdgeCollapsable(edge)){
+//					System.out.println("Edge not collapsable.");
+					continue;
+				}
+				if(collapse.isEdgeDead(edge)){
+//					System.out.println("Edge already dead.");
+					continue;
+				}
+				color.set(edge.end().index, new Vector3f(1,0,0));
+				color.set(edge.start().index, new Vector3f(1,0,1));
+				
+				collapse.collapseEdge(edge);
+				
+				counter++;
+				System.out.print(counter + " ");
 			}
-			color.set(edge.end().index, new Vector3f(1,0,0));
-			color.set(edge.start().index, new Vector3f(1,0,1));
-			
-			collapse.collapseEdge(edge);
-			counter++;
-			
-			System.out.print("Deleted.\n");
-		}
+			collapse.finish();
 		
 		System.out.println("Done with collapsing");
 
