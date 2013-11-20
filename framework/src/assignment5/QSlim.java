@@ -1,17 +1,12 @@
 package assignment5;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.PriorityQueue;
 
-import javax.vecmath.Point3f;
-import javax.vecmath.Point4f;
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import meshes.Face;
-import meshes.HEData;
-import meshes.HalfEdge;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 import openGL.objects.Transformation;
@@ -27,10 +22,7 @@ public class QSlim {
 	
 	HalfEdgeStructure hs;
 	
-	/********************************************
-	 * Use or discard the skeletton, as you like.
-	 ********************************************/
-	
+
 	
 	/**
 	 * Compute per vertex matrices
@@ -39,6 +31,28 @@ public class QSlim {
 	 */
 	private void init(){
 		
+	}
+	
+	private Matrix4f costMatrix(Vertex vert){
+		Matrix4f cost = new Matrix4f();
+		
+		Iterator<Face> faces = vert.iteratorVF();
+		
+		while(faces.hasNext()){
+			Matrix4f distanceMatrix = new Matrix4f();
+			Face face = faces.next();
+			
+			Vector3f normal = face.normal();
+			Vector4f p = new Vector4f(normal); // consider squared distance of p to plane
+			
+			Vector3f p0 = new Vector3f(vert.getPos()); // To get a point on the plane just take the position of the vertex from which the iteration started.	
+			p.w = -normal.dot(p0);
+			
+			compute_ppT(p,distanceMatrix);
+			
+			cost.add(distanceMatrix);
+		}
+		return cost;
 	}
 	
 	
@@ -65,17 +79,10 @@ public class QSlim {
 	 * @param p
 	 * @param ppT
 	 */
-	private void compute_ppT(Vector4f p, Transformation ppT) {
-		assert(p.x*0==0);
-		assert(p.y*0==0);
-		assert(p.z*0==0);
-		assert(p.w*0==0);
-		ppT.m00 = p.x*p.x; ppT.m01 = p.x*p.y; ppT.m02 = p.x*p.z; ppT.m03 = p.x*p.w;
-		ppT.m10 = p.y*p.x; ppT.m11 = p.y*p.y; ppT.m12 = p.y*p.z; ppT.m13 = p.y*p.w;
-		ppT.m20 = p.z*p.x; ppT.m21 = p.z*p.y; ppT.m22 = p.z*p.z; ppT.m23 = p.z*p.w;
-		ppT.m30 = p.w*p.x; ppT.m31 = p.w*p.y; ppT.m32 = p.w*p.z; ppT.m33 = p.w*p.w;
-			
-		
+	private void compute_ppT(Vector4f p, Matrix4f ppT) {
+		Matrix4f pCol = new Matrix4f();
+		pCol.setColumn(0, p);
+		ppT.mulTransposeRight(pCol, pCol);
 	}
 	
 	
