@@ -16,7 +16,7 @@ import openGL.MyDisplay;
 
 public class CollapseSmallEdges {
 	public static void main(String args[]) throws Exception {
-		WireframeMesh wf = ObjReader.read("objs/bunny_ear.obj", true);
+		WireframeMesh wf = ObjReader.read("objs/buddha.obj", true);
 		HalfEdgeStructure hsToKill = new HalfEdgeStructure();
 		HalfEdgeStructure hsWillLive = new HalfEdgeStructure();
 
@@ -45,12 +45,14 @@ public class CollapseSmallEdges {
 //					System.out.println("Edge too long.");
 					continue;
 				}
-				if(!HalfEdgeCollapse.isEdgeCollapsable(edge)){
-//					System.out.println("Edge not collapsable.");
-					continue;
-				}
+				
 				if(collapse.isEdgeDead(edge)){
 //					System.out.println("Edge already dead.");
+					continue;
+				}
+				
+				if(!HalfEdgeCollapse.isEdgeCollapsable(edge)){
+//					System.out.println("Edge not collapsable.");
 					continue;
 				}
 				color.set(edge.end().index, new Vector3f(1,0,0));
