@@ -1,5 +1,6 @@
 package assignment5;
 
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.vecmath.Matrix4f;
@@ -9,7 +10,6 @@ import javax.vecmath.Vector4f;
 import meshes.Face;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
-import openGL.objects.Transformation;
 
 
 /** 
@@ -21,8 +21,16 @@ import openGL.objects.Transformation;
 public class QSlim {
 	
 	HalfEdgeStructure hs;
+	public HashMap<Vertex, Matrix4f> errorMat = new HashMap<Vertex, Matrix4f>();
 	
-
+	public QSlim(HalfEdgeStructure hs){
+		this.hs = hs;
+		
+		for(Vertex vert : hs.getVertices()){
+			errorMat.put(vert, costMatrix(vert));
+		}
+		
+	}
 	
 	/**
 	 * Compute per vertex matrices

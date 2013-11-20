@@ -14,7 +14,6 @@ import meshes.Vertex;
 import meshes.WireframeMesh;
 import meshes.reader.ObjReader;
 import openGL.MyDisplay;
-import openGL.objects.Transformation;
 
 
 /**
@@ -26,6 +25,8 @@ import openGL.objects.Transformation;
 public class Assignment5_vis {
 
 	public static void main(String[] args) throws Exception{
+		float epsilon = 0.04f;
+		
 		WireframeMesh wf = ObjReader.read("objs/bunny_ear.obj", true);
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 		hs.init(wf);
@@ -33,8 +34,25 @@ public class Assignment5_vis {
 		GLHalfEdgeStructure glHs = new GLHalfEdgeStructure(hs);
 		glHs.configurePreferredShader("shaders/trimesh_flat.vert", "shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
 		
+		QSlim qSlim = new QSlim(hs);
 		MyDisplay d = new MyDisplay();
 		d.addToDisplay(glHs);
+		
+		for(Vertex vert : hs.getVertices()){
+			Matrix3f upper3x3 = new Matrix3f();
+			qSlim.errorMat.get(vert).getRotationScale(upper3x3);
+			
+			float[] eigenVals = new float[3];
+			eigenValues(upper3x3, eigenVals);
+			
+			Vector3f[] eigenVecs = new Vector3f[3];
+			for (int i = 0; i<3; i++){
+				eigenVecs[i] = eigenVector(upper3x3,eigenVals[i]);
+				eigenVecs[i].normalize();
+			}
+			
+			d.addToDisplay(ellipsoid(vert.getPos(), eigenVecs[0], epsilon/(float)Math.sqrt(eigenVals[0]), eigenVecs[1], epsilon/(float)Math.sqrt(eigenVals[1]), eigenVecs[2], epsilon/(float)Math.sqrt(eigenVals[2])));
+		}
 		
 		//visualize the isosurfaces of this bunny_ear	
 		//to compute the eigenvalues of some 3x3 matrix m:
@@ -120,7 +138,7 @@ public class Assignment5_vis {
 	 * @param l2
 	 * @return
 	 */
-	private static WireframeMesh ellipsoid(Point3f center, 
+	private static GLWireframeMesh ellipsoid(Point3f center, 
 			Vector3f v0, float l0, 
 			Vector3f v1, float l1, 
 			Vector3f v2, float l2) {
@@ -157,7 +175,7 @@ public class Assignment5_vis {
 			}
 		}
 		
-		return wf;
+		return new GLWireframeMesh(wf);
 	}
 	
 	
