@@ -19,7 +19,7 @@ public class CollapseSmallEdges {
 		HalfEdgeStructure hs = new HalfEdgeStructure();
 
 		hs.init(wf);
-		float epsilon = 0.5f;
+		float epsilon = 0.0001f;
 		
 		GLHalfEdgeStructure glBeforeCollapse = collapseSmallEdges(hs, epsilon);
 		GLHalfEdgeStructure glAfterCollapse = new GLHalfEdgeStructure(hs);

@@ -1,29 +1,17 @@
 package assignment5;
 
-import glWrapper.GLHalfEdgeStructure;
-
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Random;
-import java.util.Stack;
 
 import javax.vecmath.Point3f;
-import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
-import openGL.MyDisplay;
-
-import com.jogamp.common.util.cache.TempCacheReg;
-
 import meshes.Face;
-import meshes.Face.IteratorFE;
 import meshes.HalfEdge;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
-import meshes.WireframeMesh;
-import meshes.reader.ObjReader;
 
 
 /**
@@ -100,15 +88,19 @@ public class HalfEdgeCollapse {
 		//relink the vertices to safe edges. don't iterate 
 		//around e.end() before the collapse is finished.
 		makeV2ERefSafe(e);
-		
+				
 		deadVertices.add(e.start());
-		
 		// Assign new end-vertex to the incident edges at the 
 		// soon deleted vertex
 		Iterator<HalfEdge> iter = e.start().iteratorVE();
+		ArrayList<HalfEdge> edges = new ArrayList<HalfEdge>();
 		
 		while(iter.hasNext()){
-			iter.next().setEnd(e.end());
+			edges.add(iter.next());
+		}
+		
+		for(HalfEdge toChange : edges){
+			toChange.setEnd(e.end());
 		}
 		
 		
