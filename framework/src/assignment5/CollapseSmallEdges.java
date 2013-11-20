@@ -5,7 +5,6 @@ import glWrapper.GLHalfEdgeStructure;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
 import meshes.HalfEdge;
@@ -17,69 +16,78 @@ import openGL.MyDisplay;
 public class CollapseSmallEdges {
 	public static void main(String args[]) throws Exception {
 		WireframeMesh wf = ObjReader.read("objs/buddha.obj", true);
-		HalfEdgeStructure hsToKill = new HalfEdgeStructure();
-		HalfEdgeStructure hsWillLive = new HalfEdgeStructure();
+		HalfEdgeStructure hs = new HalfEdgeStructure();
 
-		hsToKill.init(wf);
-		hsWillLive.init(wf);
+		hs.init(wf);
 		float epsilon = 0.5f;
 		
-		ArrayList<Vector3f> color = new ArrayList<Vector3f>(Collections.nCopies(hsWillLive.getVertices().size(), new Vector3f(0,0,1)));
-		HalfEdgeCollapse collapse = new HalfEdgeCollapse(hsToKill);
+		GLHalfEdgeStructure glBeforeCollapse = collapseSmallEdges(hs, epsilon);
+		GLHalfEdgeStructure glAfterCollapse = new GLHalfEdgeStructure(hs);
 		
-//		for(int i = 0; i<250; i++){
-//		HalfEdge deadEdge = hsToKill.getHalfEdges().get(i);
-//		if(HalfEdgeCollapse.isEdgeCollapsable(deadEdge)){
-//			System.out.println("DONE! " + i);
-//			collapse.collapseEdge(deadEdge);
-//			collapse.finish();
-//		}
-//		}
-		int counter = 0;
-		int edgeCounter = 0;
-		for(HalfEdge edge: hsToKill.getHalfEdges()){
-			edgeCounter++;
-			System.out.println(edgeCounter);
-//			System.out.println(edge.toString());
-			if( edge.toVec().length() > epsilon){
-//					System.out.println("Edge too long.");
-					continue;
-				}
+		
+		glAfterCollapse.configurePreferredShader(
+				"shaders/trimesh_flat.vert",
+				"shaders/trimesh_flat.frag", 
+				"shaders/trimesh_flat.geom");
+
+
+		MyDisplay d = new MyDisplay();
+		d.addToDisplay(glAfterCollapse);
+		d.addToDisplay(glBeforeCollapse);
+	}
+
+	private static GLHalfEdgeStructure collapseSmallEdges(HalfEdgeStructure hs, float epsilon) {
+		GLHalfEdgeStructure collapsedEdgesMarked = new GLHalfEdgeStructure(hs);
+		ArrayList<Vector3f> color = new ArrayList<Vector3f>(Collections.nCopies(hs.getVertices().size(), new Vector3f(0,0,1)));
+		HalfEdgeCollapse collapse = new HalfEdgeCollapse(hs);
+		
+		int numberOfCollapsedEdges;
+		int totallyCollapsed = 0;
+		do{
+		numberOfCollapsedEdges = 0;
+		for(HalfEdge edge: hs.getHalfEdges()){
+			if( 	edge.toVec().length() > epsilon || 
+					collapse.isEdgeDead(edge) || 
+					collapse.isCollapseMeshInv(edge, edge.end().getPos()) || 
+					!HalfEdgeCollapse.isEdgeCollapsable(edge))
+			{
+				continue;
+			}
 				
-				if(collapse.isEdgeDead(edge)){
-//					System.out.println("Edge already dead.");
-					continue;
-				}
-				
-				if(!HalfEdgeCollapse.isEdgeCollapsable(edge)){
-//					System.out.println("Edge not collapsable.");
-					continue;
-				}
 				color.set(edge.end().index, new Vector3f(1,0,0));
 				color.set(edge.start().index, new Vector3f(1,0,1));
 				
 				collapse.collapseEdge(edge);
-				
-				counter++;
-				System.out.print(counter + " ");
+				numberOfCollapsedEdges ++;
 			}
-			collapse.finish();
+		totallyCollapsed += numberOfCollapsedEdges;
 		
-		System.out.println("Done with collapsing");
-
-
-		GLHalfEdgeStructure glHsKill = new GLHalfEdgeStructure(hsToKill);
-		GLHalfEdgeStructure glHsLive = new GLHalfEdgeStructure(hsWillLive);
+		System.out.println("Collapsed " + numberOfCollapsedEdges+" edges in this iteration. "
+				+ "\t Totally collapsed " + totallyCollapsed 
+				+ " out of " + hs.getHalfEdges().size() 
+				+ ",\t remaining " + (hs.getHalfEdges().size()-totallyCollapsed));
 		
-		glHsLive.add(color, "color");
+		} while(numberOfCollapsedEdges > 0);
 		
-		glHsKill.configurePreferredShader("shaders/trimesh_flat.vert",
-				"shaders/trimesh_flat.frag", "shaders/trimesh_flat.geom");
-		glHsLive.configurePreferredShader("shaders/trimesh_flatColor3f.vert",
-				"shaders/trimesh_flatColor3f.frag", "shaders/trimesh_flatColor3f.geom");
-
-		MyDisplay d = new MyDisplay();
-		d.addToDisplay(glHsKill);
-		d.addToDisplay(glHsLive);
+		collapse.finish();
+		collapsedEdgesMarked.add(color, "color");
+		
+		collapsedEdgesMarked.configurePreferredShader(
+				"shaders/trimesh_flatColor3f.vert",
+				"shaders/trimesh_flatColor3f.frag", 
+				"shaders/trimesh_flatColor3f.geom");
+		
+		return collapsedEdgesMarked;
 	}
+	
+	private static void countFlippables(HalfEdgeStructure hs) {
+		  HalfEdgeCollapse c = new HalfEdgeCollapse(hs);
+		  int nr = 0;
+		  for(HalfEdge e: hs.getHalfEdges()){
+		    if((!c.isCollapseMeshInv(e, e.end().getPos())) && c.isEdgeCollapsable(e)){
+		      nr++;
+		    }
+		  }
+		  System.out.println(nr);
+		}
 }
