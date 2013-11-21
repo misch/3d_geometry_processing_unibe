@@ -58,7 +58,12 @@ public class QSlim {
 			
 			compute_ppT(p,distanceMatrix);
 			
-			cost.add(distanceMatrix);
+			Vector4f v = new Vector4f(1,1,1, 1);
+            distanceMatrix.transform(v);
+            
+            if (!Float.isNaN(v.lengthSquared()) && !Float.isInfinite(v.lengthSquared())){
+            	cost.add(distanceMatrix);
+            }
 		}
 		return cost;
 	}
