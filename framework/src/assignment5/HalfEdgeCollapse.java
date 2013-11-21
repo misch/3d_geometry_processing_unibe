@@ -73,8 +73,6 @@ public class HalfEdgeCollapse {
 	}
 
 
-	
-
 	/**
 	 * collapse a single halfedge, but don't remove the dead halfedges faces and vertices from the
 	 * halfedges structure.
