@@ -24,7 +24,8 @@ public class HalfEdgeCollapseDemo {
 		hsWillLive.init(wf);
 
 		
-		HalfEdge deadEdge = hsToKill.getHalfEdges().get(4);
+		HalfEdge deadEdge = hsToKill.getHalfEdges().get(9);
+//		HalfEdge deadEdge2 = hsToKill.getHalfEdges().get(9);
 		//mark the halfedge on untouched object
 		ArrayList<Vector3f> color = new ArrayList<Vector3f>(Collections.nCopies(hsWillLive.getVertices().size(), new Vector3f(0,0,1)));
 		color.set(deadEdge.end().index, new Vector3f(1,0,0));

@@ -73,20 +73,25 @@ public class HalfEdgeCollapse {
 	}
 
 
+	void collapseEdge(HalfEdge e){
+		collapseEdge(e, e.end().getPos());
+	}
 	/**
 	 * collapse a single halfedge, but don't remove the dead halfedges faces and vertices from the
 	 * halfedges structure.
 	 * @param e
 	 * @param hs
 	 */
-	void collapseEdge(HalfEdge e){
+	void collapseEdge(HalfEdge e, Point3f newPos){
 		
 		
 		//First step:
 		//relink the vertices to safe edges. don't iterate 
 		//around e.end() before the collapse is finished.
 		makeV2ERefSafe(e);
-				
+		
+		e.end().setPos(newPos);
+		
 		deadVertices.add(e.start());
 		// Assign new end-vertex to the incident edges at the 
 		// soon deleted vertex
