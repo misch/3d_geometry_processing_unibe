@@ -2,12 +2,14 @@ package assignment5;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.PriorityQueue;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4f;
 
 import meshes.Face;
+import meshes.HalfEdge;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 
@@ -22,6 +24,8 @@ public class QSlim {
 	
 	HalfEdgeStructure hs;
 	public HashMap<Vertex, Matrix4f> errorMat = new HashMap<Vertex, Matrix4f>();
+	HashMap<HalfEdge, PotentialCollapse> currentCollapses = new HashMap<HalfEdge, PotentialCollapse>();
+    PriorityQueue<PotentialCollapse> collapses = new PriorityQueue<PotentialCollapse>();
 	
 	public QSlim(HalfEdgeStructure hs){
 		this.hs = hs;
@@ -30,17 +34,14 @@ public class QSlim {
 			errorMat.put(vert, costMatrix(vert));
 		}
 		
-	}
-	
-	/**
-	 * Compute per vertex matrices
-	 * Compute edge collapse costs,
-	 * Fill up the Priority queue/heap or similar
-	 */
-	private void init(){
+		for(HalfEdge edge : hs.getHalfEdges()){
+			PotentialCollapse potCollapse = new PotentialCollapse(hs, errorMat);
+			collapses.add(potCollapse);
+			currentCollapses.put(edge, potCollapse);
+		}
 		
 	}
-	
+
 	private Matrix4f costMatrix(Vertex vert){
 		Matrix4f cost = new Matrix4f();
 		
@@ -108,6 +109,11 @@ public class QSlim {
 	 *
 	 */
 	protected class PotentialCollapse implements Comparable<PotentialCollapse>{
+
+		public PotentialCollapse(HalfEdgeStructure hs,
+				HashMap<Vertex, Matrix4f> errorMat) {
+			// TODO Auto-generated constructor stub
+		}
 
 		@Override
 		public int compareTo(PotentialCollapse arg1) {
