@@ -1,6 +1,6 @@
 package assignment4.generatedMeshes;
 
-import glWrapper.GLHalfedgeStructure;
+import glWrapper.GLHalfEdgeStructure;
 import glWrapper.GLPointCloud;
 import glWrapper.GLWireframeMesh;
 

@@ -1,47 +1,90 @@
-package openGL.picking;
+package openGL;
 
-import javax.vecmath.Point3f;
+import java.awt.BorderLayout;
+import java.awt.event.ActionListener;
 
-import openGL.objects.Transformation;
+import javax.swing.ButtonGroup;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
+import openGL.gl.GLDisplayable;
+import openGL.gl.interactive.GLUpdateable;
+import openGL.interfaces.RenderPanel;
+import openGL.objects.Shape;
+import openGL.picking.PickingListener;
+import openGL.picking.PickingPanel;
+import openGL.picking.PickingProcessor;
 
 /**
- * Provides a test to test if some points x,y coordinates lie in a  frame  described by two points,
- * given some coordinate system
+ * A simple  displayer that extends {@link MyDisplay} with 
+ * picking capabilities for anything that is  {@link GLUpdateable}.
+ * 
+ * By default it provides zoom (mouse scrolling, hold shift for fast mode),
+ * a trackball, near and far plane control 
+ * (ctrl-scroll, alt-scroll), and an interface to switch on/off everything
+ * on display.
+ * And Picking (ctrl + mouse click/drag)
  * @author bertholet
  *
  */
-public class TransformedBBox {
-	
-	private Transformation t;
-	private Point3f max;
-	private Point3f min;
-	Point3f transf;
+public class MyPickingDisplay extends MyDisplay implements ActionListener {
 
-	public TransformedBBox(Transformation t, Point3f p0, Point3f p1){
-		this.t = t;
-		this.min = new Point3f();
-		min.x = p0.x <p1.x? p0.x:p1.x;
-		min.y = p0.y <p1.y? p0.y:p1.y;
-		min.z = p0.z <p1.z? p0.z:p1.z;
-		this.max = new Point3f();
-		max.x = p0.x >p1.x? p0.x:p1.x;
-		max.y = p0.y >p1.y? p0.y:p1.y;
-		max.z = p0.z >p1.z? p0.z:p1.z;
+	PickingListener l;
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public MyPickingDisplay(){
+		super();
 		
-		transf = new Point3f();
+		l = new PickingListener(this, sceneManager);
+		renderPanel.getCanvas().addMouseListener(l);
+		renderPanel.getCanvas().addMouseMotionListener(l);
+		renderPanel.getCanvas().addKeyListener(l);
+		
+		renderPanel.getCanvas().setFocusable(true);
+		
+		Shape s = new Shape(l);
+		sceneManager.addShape(s);
+		
+		PickingPanel pickpan = new PickingPanel();
+		pickpan.addPickingListener(l);
+		
+		this.getContentPane().add(
+				pickpan, BorderLayout.NORTH);
+		
+	}
+	
+	
+	public void addAsPickable(GLDisplayable glupd, PickingProcessor proc){
+		Shape s = new Shape(glupd);
+		sceneManager.addShape(s);
+		trackball.register(s);
+		l.register(s, proc);
+		this.updateWhatsOnDisplay();
+		this.updateDisplay();
+		this.invalidate();
 	}
 
-	public boolean contains(Point3f pos) {
-		t.transform(pos, transf);
-		
-		return min.x < transf.x &&
-				min.y < transf.y &&
-				max.x > transf.x &&
-				max.y > transf.y;
-		
-	}
-	
-	
 
+	public float glWidth() {
+		return renderPanel.getCanvas().getWidth();
+	}
+
+
+	public float glHeight() {
+		return renderPanel.getCanvas().getHeight();		
+	}
+
+
+	public RenderPanel getRenderPanel() {
+		return renderPanel;
+	}
+
+
+	
 }
