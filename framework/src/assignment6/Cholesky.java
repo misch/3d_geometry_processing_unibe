@@ -10,6 +10,7 @@ import no.uib.cipr.matrix.sparse.CompRowMatrix;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
 import sparse.SparseTools;
+import sparse.solver.Solver;
 
 /**
  * Implementation/ wrapper of a Cholesky Solver.
@@ -20,7 +21,7 @@ import sparse.SparseTools;
  * @author Alf
  *
  */
-public class Cholesky {
+public class Cholesky extends Solver{
 
 	
 	private DenseCholesky chl;
@@ -154,5 +155,10 @@ public class Cholesky {
 	public void solve(ArrayList<Float> b, ArrayList<Float> x){
 		forwardSubst(z, b);
 		backwardSubst(x, z);
+	}
+	
+	@Override
+	public void solve(CSRMatrix mat, ArrayList<Float> b, ArrayList<Float> x) {
+		this.solve(b, x);
 	}
 }

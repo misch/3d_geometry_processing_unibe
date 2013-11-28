@@ -6,11 +6,13 @@ import java.util.HashSet;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 import sparse.CSRMatrix;
+import sparse.solver.Solver;
 
 
 
@@ -40,8 +42,8 @@ public class RAPS_modelling {
 	CSRMatrix L_deform;
 	
 	//allocate righthand sides and x only once.
-	ArrayList<Float>[] b;
-	ArrayList<Float> x;
+	ArrayList<Point3f> b;
+	ArrayList<Point3f> x;
 
 	//sets of vertex indices that are constrained.
 	private HashSet<Integer> keepFixed;
@@ -92,7 +94,7 @@ public class RAPS_modelling {
 	 * Good place to do the cholesky decompositoin
 	 */
 	public void updateL() {
-		//do your stuff
+		//TODO
 	}
 	
 	/**
@@ -103,7 +105,11 @@ public class RAPS_modelling {
 	public void deform(Matrix4f t, int nRefinements){
 		this.transformTarget(t);
 		
-		//RAPS algorithm,,
+		//TODO ... Should there be more...???
+		for (int i = 0; i < nRefinements; i++){
+			optimalPositions();
+			optimalRotations();
+		}
 	}
 	
 
@@ -143,17 +149,12 @@ public class RAPS_modelling {
 	 * @param hs
 	 */
 	private void init_b_x(HalfEdgeStructure hs) {
-		b = new ArrayList[3];
-		for(int i = 0; i < 3; i++){
-			b[i] = new ArrayList<>(hs.getVertices().size());
+		b = new ArrayList<Point3f>();
+		x = new ArrayList<Point3f>();
 			for(int j = 0; j < hs.getVertices().size(); j++){
-				b[i].add(0.f);
+				b.add(new Point3f(0,0,0));
+				x.add(new Point3f(0,0,0));
 			}
-		}
-		x = new ArrayList<>(hs.getVertices().size());
-		for(int j = 0; j < hs.getVertices().size(); j++){
-			x.add(0.f);
-		}
 	}
 	
 	
@@ -162,8 +163,11 @@ public class RAPS_modelling {
 	 * Compute optimal positions for the current rotations.
 	 */
 	public void optimalPositions(){
-	
-		//do your stuff...
+		compute_b();
+		Solver solver = new Cholesky(L_cotan);
+		solver.solveTuple(L_cotan, b, x);
+		
+		//TODO set new vertices
 	}
 	
 
@@ -172,7 +176,8 @@ public class RAPS_modelling {
 	 */
 	private void compute_b() {
 		reset_b();
-		//do your stuff...
+
+		//TODO
 		
 		
 	}
@@ -183,10 +188,8 @@ public class RAPS_modelling {
 	 * helper method
 	 */
 	private void reset_b() {
-		for(int i = 0 ; i < 3; i++){
-			for(int j = 0; j < b[i].size(); j++){
-				b[i].set(j,0.f);
-			}
+		for(Point3f p : b){
+			p.set(0, 0, 0);
 		}
 	}
 
@@ -203,7 +206,7 @@ public class RAPS_modelling {
 		//Note: slightly better results are achieved when the absolute of cotangent
 		//weights w_ij are used instead of plain cotangent weights.		
 			
-		//do your stuff..
+		//TODO
 		
 	}
 
