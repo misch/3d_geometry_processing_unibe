@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 
 import javax.vecmath.Point3f;
-import javax.vecmath.Vector3f;
 
 import meshes.exception.DanglingTriangleException;
 import meshes.exception.MeshNotOrientedException;
@@ -36,7 +36,6 @@ public class HalfEdgeStructure {
 	ArrayList<Face> faces;
 	ArrayList<Vertex> vertices;
 	
-	
 	public HalfEdgeStructure(){
 		faces = new ArrayList<Face>();
 		edges = new ArrayList<HalfEdge>();
@@ -44,6 +43,55 @@ public class HalfEdgeStructure {
 	}
 	
 	
+	public HalfEdgeStructure(HalfEdgeStructure hs) {
+		faces = new ArrayList<Face>();
+		edges = new ArrayList<HalfEdge>();
+		vertices = new ArrayList<Vertex>();
+		
+		HashMap<Face, Face> f2f = new HashMap<>();
+		for(Face f: hs.getFaces()){
+			Face newFace = new Face();
+			faces.add(newFace);
+			f2f.put(f, newFace);
+		}
+		HashMap<Vertex, Vertex> v2v = new HashMap<>();
+		for(Vertex v: hs.getVertices()){
+			Vertex newV = new Vertex(new Point3f(v.getPos()));
+			vertices.add(newV);
+			v2v.put(v, newV);
+		}
+		HashMap<HalfEdge, HalfEdge> e2e = new HashMap<>();
+		for(HalfEdge e: hs.getHalfEdges()){
+			
+			HalfEdge newE = new HalfEdge(f2f.get(e.getFace()), v2v.get(e.end()));
+			e2e.put(e, newE);
+			edges.add(newE);
+		}
+		
+		//interlink everything: faces->edge
+		for(Face f : hs.getFaces()){
+			Face newFace = f2f.get(f);
+			newFace.setHalfEdge(e2e.get(f.getHalfEdge()));
+		}
+		
+		//vertex-> edge
+		for(Vertex v : hs.getVertices()){
+			Vertex newV = v2v.get(v);
+			newV.setHalfEdge(e2e.get(v.getHalfEdge()));
+		}
+		
+		//edge -> edge
+		for(HalfEdge e: hs.getHalfEdges()){
+			HalfEdge newHE = e2e.get(e);
+			newHE.setNext(e2e.get(e.next));
+			newHE.setPrev(e2e.get(e.prev));
+			newHE.setOpposite(e2e.get(e.opposite));
+		}
+		
+		this.enumerateVertices();
+	}
+
+
 	public ArrayList<Vertex> getVertices() {
 		return vertices;
 	}
@@ -220,19 +268,5 @@ public class HalfEdgeStructure {
 			v.index= idx++;
 		}
 	}
-	
-	public float getVolume(){
-		
-		float sum = 0;
-		for (Face face : this.getFaces()){
-			Iterator<Vertex> iter = face.iteratorFV();
-			
-			Vector3f crossProd = new Vector3f();
-			
-			crossProd.cross(new Vector3f(iter.next().getPos()),new Vector3f(iter.next().getPos()));
-			
-			sum += Math.abs(crossProd.dot(new Vector3f(iter.next().getPos())));	
-		}
-		return sum/6;
-	}
+
 }
