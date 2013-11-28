@@ -9,6 +9,7 @@ import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
+import assignment4.LMatrices;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 import sparse.CSRMatrix;
@@ -29,7 +30,7 @@ public class RAPS_modelling {
 	
 	//A copy of the original half-edge structure. This is needed  to compute the correct
 	//rotation matrices.
-	private HalfEdgeStructure hs_originl;
+	private HalfEdgeStructure hs_original;
 	//The halfedge structure being deformed
 	private HalfEdgeStructure hs_deformed;
 	
@@ -58,14 +59,15 @@ public class RAPS_modelling {
 	 * @param hs
 	 */
 	public RAPS_modelling(HalfEdgeStructure hs){
-		this.hs_originl = new HalfEdgeStructure(hs); //deep copy of the original mesh
+		this.hs_original = new HalfEdgeStructure(hs); //deep copy of the original mesh
 		this.hs_deformed = hs;
 		
 		this.keepFixed = new HashSet<>();
 		this.deform = new HashSet<>();
 		
-		
 		init_b_x(hs);
+		
+		L_cotan = LMatrices.mixedCotanLaplacian(hs);
 		
 	}
 	
@@ -139,7 +141,7 @@ public class RAPS_modelling {
 	 * @return
 	 */
 	public HalfEdgeStructure getOriginalCopy() {
-		return hs_originl;
+		return hs_original;
 	}
 	
 	
@@ -167,7 +169,9 @@ public class RAPS_modelling {
 		Solver solver = new Cholesky(L_cotan);
 		solver.solveTuple(L_cotan, b, x);
 		
-		//TODO set new vertices
+		for (Vertex vert : hs_deformed.getVertices()){
+			vert.setPos(x.get(vert.index));
+		}
 	}
 	
 
