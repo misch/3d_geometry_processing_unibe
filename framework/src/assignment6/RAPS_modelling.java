@@ -74,6 +74,14 @@ public class RAPS_modelling {
 		
 		init_b_x(hs);
 		
+        // initialize rotations with identity
+        rotations = new ArrayList<Matrix3f>();
+        for (int i = 0; i < hs.getVertices().size(); i++) {
+                Matrix3f id = new Matrix3f();
+                id.setIdentity();
+                rotations.add(id);
+        }
+		
 		L_cotan = LMatrices.mixedCotanLaplacian(hs, false);
 		
 	}
@@ -227,11 +235,14 @@ public class RAPS_modelling {
 				rotation.add(rotations.get(edge.end().index));
 				Vector3f vec = edge.toVec();
 				rotation.transform(vec);
-				// TODO: scale by cotangent weights and 0.5
+				
+				float alpha = Math.max(edge.getOppositeAngle(),1e-2f);
+				float beta = Math.max(edge.getOpposite().getOppositeAngle(),1e-2f);
+				float cotanWeight = (cot(alpha) + cot(beta));
+				vec.scale(cotanWeight*0.5f);
+				b.get(vert.index).add(vec);
 			}
 		}
-		
-		
 		
 		LTransposed.multPoints(b, Ltb);
 		
@@ -252,7 +263,10 @@ public class RAPS_modelling {
 		b = Ltb;
 	}
 
-
+	// TODO: refactor!
+	private static float cot(float angle){
+		return 1.f/(float)(Math.tan(angle));
+	}
 
 	/**
 	 * helper method

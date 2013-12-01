@@ -93,6 +93,7 @@ public class LMatrices {
 		return mixedCotanLaplacian(hs,true);
 	}
 		
+	// TODO: refactor!
 	private static float cot(float angle){
 		return 1.f/(float)(Math.tan(angle));
 	}
