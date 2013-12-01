@@ -2,8 +2,8 @@ package sparse.solver;
 
 import java.util.ArrayList;
 
+import javax.vecmath.Point3f;
 import javax.vecmath.Tuple3f;
-import javax.vecmath.Vector3f;
 
 import sparse.CSRMatrix;
 import sparse.LinearSystem;
@@ -40,7 +40,7 @@ public abstract class Solver {
 		solve(m, bZ, xZ);
 		x.clear();
 		for (int i = 0; i < b.size(); i++){
-			x.add((T) new Vector3f(xX.get(i),xY.get(i),xZ.get(i)));
+			x.add((T) new Point3f(xX.get(i),xY.get(i),xZ.get(i)));
 		}
 	}
 	
