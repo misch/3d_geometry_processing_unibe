@@ -13,6 +13,7 @@ import assignment4.LMatrices;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 import sparse.CSRMatrix;
+import sparse.CSRMatrix.col_val;
 import sparse.solver.Solver;
 
 
@@ -49,8 +50,12 @@ public class RAPS_modelling {
 	//sets of vertex indices that are constrained.
 	private HashSet<Integer> keepFixed;
 	private HashSet<Integer> deform;
+	
+	// weight for user contraints
+	private float constraintWeight = 100; 
 
-		
+	// Solver for linear equations system
+	Solver solver;
 	
 	
 	
@@ -67,7 +72,7 @@ public class RAPS_modelling {
 		
 		init_b_x(hs);
 		
-		L_cotan = LMatrices.mixedCotanLaplacian(hs);
+		L_cotan = LMatrices.mixedCotanLaplacian(hs, false);
 		
 	}
 	
@@ -96,7 +101,36 @@ public class RAPS_modelling {
 	 * Good place to do the cholesky decompositoin
 	 */
 	public void updateL() {
-		//TODO
+		
+		CSRMatrix userConstraints = getConstraintsMatrix();
+		
+		// build L_deform as L_deform = (transpose(L_cotan) * L_cotan  + weights^2 * userConstraints) 
+		// Eq. (2) on exercise sheet
+		L_deform = new CSRMatrix(0,L_cotan.nCols);
+		
+		CSRMatrix LTransposed = L_cotan.transposed();
+		
+		CSRMatrix temp = new CSRMatrix(0, L_cotan.nCols);
+		LTransposed.mult(L_cotan, temp);
+		
+		L_deform.add(temp, userConstraints);
+		
+		solver = new Cholesky(L_deform);
+	}
+
+	private CSRMatrix getConstraintsMatrix() {
+		// create matrix containing weighted user constraints
+		CSRMatrix userConstraints = new CSRMatrix(0,L_cotan.nCols);
+		
+		for (Vertex vert : hs_original.getVertices()){
+			int idx = vert.index;
+			userConstraints.addRow();
+		
+			if(keepFixed.contains(idx) || deform.contains(idx)){
+				userConstraints.lastRow().add(new col_val(idx,(float)Math.pow(constraintWeight,2)));
+			}
+		}
+		return userConstraints;
 	}
 	
 	/**
@@ -107,7 +141,6 @@ public class RAPS_modelling {
 	public void deform(Matrix4f t, int nRefinements){
 		this.transformTarget(t);
 		
-		//TODO ... Should there be more...???
 		for (int i = 0; i < nRefinements; i++){
 			optimalPositions();
 			optimalRotations();
@@ -166,8 +199,8 @@ public class RAPS_modelling {
 	 */
 	public void optimalPositions(){
 		compute_b();
-		Solver solver = new Cholesky(L_cotan);
-		solver.solveTuple(L_cotan, b, x);
+
+		solver.solveTuple(L_deform, b, x);
 		
 		for (Vertex vert : hs_deformed.getVertices()){
 			vert.setPos(x.get(vert.index));
@@ -179,11 +212,27 @@ public class RAPS_modelling {
 	 * compute the righthand side for the position optimization
 	 */
 	private void compute_b() {
+		CSRMatrix LTransposed = L_cotan.transposed();
+		ArrayList<Point3f> Ltb = new ArrayList<Point3f>();
+		
 		reset_b();
-
-		//TODO
+		LTransposed.multPoints(b, Ltb);
 		
+		CSRMatrix constraintMatrix = getConstraintsMatrix();
 		
+		ArrayList<Point3f> constrainedPoints = new ArrayList<Point3f>();
+		
+		ArrayList<Point3f> points = new ArrayList<Point3f>();
+		for(Vertex vert : hs_deformed.getVertices()){
+			points.add(vert.getPos());
+		}
+		constraintMatrix.multPoints(points, constrainedPoints);
+		
+		for (int i = 0; i<b.size(); i++){
+			Ltb.get(i).add(constrainedPoints.get(i));
+		}
+		
+		b = Ltb;
 	}
 
 

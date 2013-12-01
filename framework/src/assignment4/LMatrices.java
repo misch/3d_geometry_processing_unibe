@@ -48,7 +48,7 @@ public class LMatrices {
 	 * @param hs
 	 * @return
 	 */
-	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs){
+	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs, boolean weighted){
 		CSRMatrix laplace = new CSRMatrix(0,hs.getVertices().size());
 		
 		for(Vertex vert : hs.getVertices()){
@@ -67,8 +67,11 @@ public class LMatrices {
 					float beta = Math.max(edge.getOpposite().getOppositeAngle(),1e-2f);
 					Vector3f v = edge.toVec();
 					
-					float weight = (cot(alpha) + cot(beta))/ (2*area); 
-//					weight = Math.max(Math.min(weight,10),-1
+					float weight = (cot(alpha) + cot(beta));
+					
+					if (weighted){
+						weight /= (2*area);
+					}
 					sum += weight;
 					laplace.lastRow().add(new col_val(edge.start().index,weight));
 			}
@@ -78,6 +81,16 @@ public class LMatrices {
 		}
 		
 		return laplace;
+	}
+	
+	
+	/**
+	 * The cotangent Laplacian
+	 * @param hs
+	 * @return
+	 */
+	public static CSRMatrix mixedCotanLaplacian(HalfEdgeStructure hs){
+		return mixedCotanLaplacian(hs,true);
 	}
 		
 	private static float cot(float angle){
