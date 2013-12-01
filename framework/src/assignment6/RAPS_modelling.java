@@ -3,18 +3,20 @@ package assignment6;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 
 import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector3f;
 
-import assignment4.LMatrices;
+import meshes.HalfEdge;
 import meshes.HalfEdgeStructure;
 import meshes.Vertex;
 import sparse.CSRMatrix;
 import sparse.CSRMatrix.col_val;
 import sparse.solver.Solver;
+import assignment4.LMatrices;
 
 
 
@@ -216,6 +218,21 @@ public class RAPS_modelling {
 		ArrayList<Point3f> Ltb = new ArrayList<Point3f>();
 		
 		reset_b();
+		
+		for( Vertex vert : hs_original.getVertices()){
+			Iterator<HalfEdge> iter = vert.iteratorVE();
+			while(iter.hasNext()){
+				HalfEdge edge = iter.next();
+				Matrix3f rotation = rotations.get(edge.start().index);
+				rotation.add(rotations.get(edge.end().index));
+				Vector3f vec = edge.toVec();
+				rotation.transform(vec);
+				// TODO: scale by cotangent weights and 0.5
+			}
+		}
+		
+		
+		
 		LTransposed.multPoints(b, Ltb);
 		
 		CSRMatrix constraintMatrix = getConstraintsMatrix();
