@@ -231,7 +231,7 @@ public class RAPS_modelling {
 			Iterator<HalfEdge> iter = vert.iteratorVE();
 			while(iter.hasNext()){
 				HalfEdge edge = iter.next();
-				Matrix3f rotation = rotations.get(edge.start().index);
+				Matrix3f rotation = new Matrix3f(rotations.get(edge.start().index));
 				rotation.add(rotations.get(edge.end().index));
 				Vector3f vec = edge.toVec();
 				rotation.transform(vec);
@@ -239,7 +239,7 @@ public class RAPS_modelling {
 				float alpha = Math.max(edge.getOppositeAngle(),1e-2f);
 				float beta = Math.max(edge.getOpposite().getOppositeAngle(),1e-2f);
 				float cotanWeight = (cot(alpha) + cot(beta));
-				vec.scale(cotanWeight*0.5f);
+				vec.scale(cotanWeight*-0.5f);
 				b.get(vert.index).add(vec);
 			}
 		}
