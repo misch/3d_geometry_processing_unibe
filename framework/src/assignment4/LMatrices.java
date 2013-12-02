@@ -55,7 +55,7 @@ public class LMatrices {
 			Iterator<HalfEdge> iter = vert.iteratorVE();
 			laplace.addRow();
 			
-			if(Assignment4_3_minimalSurfaces.isOnBoundary(vert)){
+			if(vert.isOnBoundary()){
 				continue;
 			}
 			float area = vert.getMixedArea();

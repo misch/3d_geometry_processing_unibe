@@ -5,6 +5,7 @@ import glWrapper.GLUpdatableHEStructure;
 import java.util.HashSet;
 
 import javax.vecmath.Matrix3f;
+import javax.vecmath.Matrix4f;
 import javax.vecmath.Tuple3f;
 import javax.vecmath.Vector3f;
 
@@ -87,14 +88,14 @@ public class DeformationPickingProcessor implements PickingProcessor{
 	@Override
 	public void move(Vector3f delta, PickTarget target) {
 		
-		HashSet<Integer> set = (target == PickTarget.SET1 ? set1: set2);
+		Matrix4f translation = new Matrix4f();
+		translation.setIdentity();
+		translation.setTranslation(delta);
 		
-		for(Integer v : set){
-			hs.getVertices().get(v).getPos().add(delta);
-		}
 		
 		//delegate the work to find the deformed mesh to the modeler..
-		
+		modeler.deform(translation, 1);
+
 		hs_visualization.updatePosition();
 	}
 

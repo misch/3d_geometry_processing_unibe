@@ -121,7 +121,7 @@ public class RAPS_modelling {
 		CSRMatrix LTransposed = L_cotan.transposed();
 		
 		CSRMatrix temp = new CSRMatrix(0, L_cotan.nCols);
-		LTransposed.mult(L_cotan, temp);
+		LTransposed.multParallel(L_cotan, temp);
 		
 		L_deform.add(temp, userConstraints);
 		
