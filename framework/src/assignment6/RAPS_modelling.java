@@ -262,7 +262,6 @@ public class RAPS_modelling {
 		b = Ltb;
 	}
 
-
 	private float getCotanWeights(HalfEdge edge) {
 		float alpha = Math.max(edge.getOppositeAngle(),1e-2f);
 		float beta = Math.max(edge.getOpposite().getOppositeAngle(),1e-2f);
@@ -290,11 +289,9 @@ public class RAPS_modelling {
 	 * the original and deformed positions.
 	 */
 	public void optimalRotations() {
-		//for the svd.
-		Linalg3x3 l = new Linalg3x3(10);// argument controls number of iterations for ed/svd decompositions 
-										//3 = very low precision but high speed. 3 seems to be good enough
+		
         for (int i = 0; i < rotations.size(); i++) {
-        	/* contruct the matrix S that will be decomposed (SVD) */
+        	/* construct the matrix S that will be decomposed (SVD) */
         	Matrix3f S = new Matrix3f();
         	
         	Vertex vert_original = hs_original.getVertices().get(i);
@@ -316,9 +313,32 @@ public class RAPS_modelling {
                     S.add(tmp);
             }
             
-            // TODO: 
-            // 	- SVD for S
-            //	- get rotations from the two unitary (our case: orthogonal) matrices
+            /* SVD */
+            Linalg3x3 l = new Linalg3x3(10);	// argument controls number of iterations for ed/svd decompositions 
+            									// 3 = very low precision but high speed. 3 seems to be good enough
+            Matrix3f sigma = new Matrix3f();
+            Matrix3f U = new Matrix3f();
+            Matrix3f V = new Matrix3f();
+            l.svd(S, U, sigma, V);
+            
+            /* compute rotation for the current vertex - 
+             * the result will be stored to V 
+             */
+            
+            // if necessary, change sign of last column of U 
+            // to get det(U) > 0
+            if (U.determinant() < 0) {
+                    Vector3f col = new Vector3f();
+                    U.getColumn(2, col);
+                    col.scale(-1);
+                    U.setColumn(2, col);
+            }
+            
+            
+            U.transpose();
+            V.mul(U);
+            
+            rotations.set(i, V);
         }		
 	}
 

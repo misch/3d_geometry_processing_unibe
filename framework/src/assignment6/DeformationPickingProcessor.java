@@ -105,15 +105,11 @@ public class DeformationPickingProcessor implements PickingProcessor{
 	 */
 	@Override
 	public void rotate(Matrix3f rot, PickTarget target) {
-		HashSet<Integer> set = (target == PickTarget.SET1 ? set1: set2);
-		
-		for(Integer v : set){
-			rot.transform(hs.getVertices().get(v).getPos());
-		}
-		
-		//delegate the work to find the deformed mesh to the modeler..
-		
-		hs_visualization.updatePosition();
+        Matrix4f rotation = new Matrix4f();
+        rotation.set(rot);
+        modeler.deform(rotation, 2);
+        
+        hs_visualization.updatePosition();
 	}
 	
 	
