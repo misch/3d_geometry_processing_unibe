@@ -86,6 +86,7 @@ public class RAPS_modelling {
 		
 	}
 	
+
 	/**
 	 * Set which vertices should be kept fixed. 
 	 * @param verts_idx
@@ -236,9 +237,7 @@ public class RAPS_modelling {
 				Vector3f vec = edge.toVec();
 				rotation.transform(vec);
 				
-				float alpha = Math.max(edge.getOppositeAngle(),1e-2f);
-				float beta = Math.max(edge.getOpposite().getOppositeAngle(),1e-2f);
-				float cotanWeight = (cot(alpha) + cot(beta));
+				float cotanWeight = getCotanWeights(edge);
 				vec.scale(cotanWeight*-0.5f);
 				b.get(vert.index).add(vec);
 			}
@@ -261,6 +260,14 @@ public class RAPS_modelling {
 		}
 		
 		b = Ltb;
+	}
+
+
+	private float getCotanWeights(HalfEdge edge) {
+		float alpha = Math.max(edge.getOppositeAngle(),1e-2f);
+		float beta = Math.max(edge.getOpposite().getOppositeAngle(),1e-2f);
+		float cotanWeight = (cot(alpha) + cot(beta));
+		return cotanWeight;
 	}
 
 	// TODO: refactor!
@@ -286,12 +293,33 @@ public class RAPS_modelling {
 		//for the svd.
 		Linalg3x3 l = new Linalg3x3(10);// argument controls number of iterations for ed/svd decompositions 
 										//3 = very low precision but high speed. 3 seems to be good enough
-			
-		//Note: slightly better results are achieved when the absolute of cotangent
-		//weights w_ij are used instead of plain cotangent weights.		
-			
-		//TODO
-		
+        for (int i = 0; i < rotations.size(); i++) {
+        	/* contruct the matrix S that will be decomposed (SVD) */
+        	Matrix3f S = new Matrix3f();
+        	
+        	Vertex vert_original = hs_original.getVertices().get(i);
+        	Vertex vert_deformed = hs_deformed.getVertices().get(i);
+            
+            Iterator<HalfEdge> iter_deformed = vert_deformed.iteratorVE();
+            Iterator<HalfEdge> iter_original = vert_original.iteratorVE();
+
+            // "summation over j" (all incoming edges)
+            while (iter_deformed.hasNext() && iter_original.hasNext()) { 
+                    HalfEdge e_ij = iter_original.next();
+                    HalfEdge e_ij_prime = iter_deformed.next();
+                    
+                    Matrix3f tmp = new Matrix3f();
+                    compute_ppT(e_ij.toVec(), e_ij_prime.toVec(),tmp);
+                    
+                    float w_ij  = Math.abs(getCotanWeights(e_ij));
+                    tmp.mul(w_ij);
+                    S.add(tmp);
+            }
+            
+            // TODO: 
+            // 	- SVD for S
+            //	- get rotations from the two unitary (our case: orthogonal) matrices
+        }		
 	}
 
 	
