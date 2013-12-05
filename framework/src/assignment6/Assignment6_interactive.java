@@ -46,7 +46,8 @@ public class Assignment6_interactive {
 	 */
 	private static void pickingDemo() throws Exception{
 		//WireframeMesh wf = new Cylinder2(0.3f,1.8f).result;
-		WireframeMesh wf = ObjReader.read("./objs/head.obj", true);
+//		WireframeMesh wf = ObjReader.read("./objs/head.obj", true);
+		WireframeMesh wf = new Cylinder2(0.3f,2f).result;
 		//WireframeMesh wf = ObjReader.read("./objs/armadillo_1000.obj", true);
 		
 		HalfEdgeStructure hs = new HalfEdgeStructure();
